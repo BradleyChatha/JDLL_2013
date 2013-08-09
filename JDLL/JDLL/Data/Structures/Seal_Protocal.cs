@@ -27,6 +27,18 @@ namespace JDLL.Data.Structures
             FileIO.WriteToFile(Path, Prefix + ";" + Value + ";NAME=" + Name);
         }
 
+        public static void WriteEntry(String Path, String Prefix, String Name, IEnumerable<String> Values)
+        {
+            IsSealFile(Path);
+
+            String Value = "";
+
+            foreach (String s in Values)
+                Value += s + ";";
+
+            FileIO.WriteToFile(Path, Prefix + ";" + Value + "NAME=" + Name);
+        }
+
         public static bool DeleteEntry(String Path, String Prefix, String Name)
         {
             try
@@ -50,6 +62,20 @@ namespace JDLL.Data.Structures
             {
                 return false;
             }
+        }
+
+        public static void ChangeEntryValue(String Path, String Prefix, String Name, String Value)
+        {
+            DeleteEntry(Path, Prefix, Name);
+
+            WriteEntry(Path, Prefix, Name, Value);
+        }
+
+        public static void ChangeEntryValue(String Path, String Prefix, String Name, IEnumerable<String> Values)
+        {
+            DeleteEntry(Path, Prefix, Name);
+
+            WriteEntry(Path, Prefix, Name, Values);
         }
         #endregion
 
