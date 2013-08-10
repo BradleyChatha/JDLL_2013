@@ -57,6 +57,36 @@ namespace JDLL.Util
                 File.Delete(Path);
         }
 
+        public static void MultiEncrypt(String Path, String Output, bool DeleteOrigin, int Number)
+        {
+            File.Copy(Path, Path + ".bak");
+
+            for (int i = 0; i < Number - 1; i++)
+                EncryptFile(Path, Path, false);
+
+            EncryptFile(Path, Output, DeleteOrigin);
+
+            if(!DeleteOrigin)
+                File.Copy(Path + ".bak", Path);
+
+            File.Delete(Path + ".bak");
+        }
+
+        public static void MultDecrypt(String Path, String Output, bool DeleteEncryptedFile, int Number)
+        {
+            File.Copy(Path, Path + ".bak");
+
+            for (int i = 0; i < Number - 1; i++)
+                DecryptFile(Path, Path, false);
+
+            DecryptFile(Path, Output, DeleteEncryptedFile);
+
+            if(!DeleteEncryptedFile)
+                File.Copy(Path + ".bak", Path);
+
+            File.Delete(Path + ".bak");
+        }
+
         public static String[] ReadFile(String Path)
         {
             String FileName = Variables.RandomString(5);
@@ -106,7 +136,7 @@ namespace JDLL.Util
             EncryptFile(TempFile, Path, true);
         }
 
-        public static void CreateFile(String Path, String[] Contents)
+        public static void CreateFile(String Path, IEnumerable<String> Contents)
         {
             String TempFile = Variables.RandomString(10);
 
@@ -114,7 +144,7 @@ namespace JDLL.Util
             EncryptFile(TempFile, Path, true);
         }
 
-        public static void ReplaceAll(String Path, String[] Contents)
+        public static void ReplaceAll(String Path, IEnumerable<String> Contents)
         {
             String TempFile = Variables.RandomString(3);
 
