@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDLL", "JDLL\JDLL.csproj", "{AC29FA89-73ED-46DF-80BB-442423D51E8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "..\..\..\DLL\JDLL\Tester\Tester.csproj", "{99DB975B-771F-4651-9FB4-EB9BA00D2C58}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,10 +13,6 @@ Global
 		{AC29FA89-73ED-46DF-80BB-442423D51E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC29FA89-73ED-46DF-80BB-442423D51E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC29FA89-73ED-46DF-80BB-442423D51E8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99DB975B-771F-4651-9FB4-EB9BA00D2C58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99DB975B-771F-4651-9FB4-EB9BA00D2C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99DB975B-771F-4651-9FB4-EB9BA00D2C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99DB975B-771F-4651-9FB4-EB9BA00D2C58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

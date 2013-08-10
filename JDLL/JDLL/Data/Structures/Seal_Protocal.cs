@@ -49,7 +49,7 @@ namespace JDLL.Data.Structures
                 List<String> NewContent = new List<String>();
 
                 foreach (String s in Contents)
-                    if (s.StartsWith(Prefix) && GetValueName(s).Equals(Name))
+                    if (s.StartsWith(Prefix) && GetEntryName(s).Equals(Name))
                         continue;
                     else
                         NewContent.Add(s);
