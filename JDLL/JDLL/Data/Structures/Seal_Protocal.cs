@@ -77,6 +77,15 @@ namespace JDLL.Data.Structures
 
             WriteEntry(Path, Prefix, Name, Values);
         }
+
+        public static String CreateRandomFile(String Name)
+        {
+            String FileName = Variables.RandomString(10);
+
+            CreateFile(FileName, Name);
+
+            return FileName;
+        }
         #endregion
 
         #region Reading
