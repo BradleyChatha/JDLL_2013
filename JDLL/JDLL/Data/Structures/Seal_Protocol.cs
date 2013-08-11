@@ -80,11 +80,20 @@ namespace JDLL.Data.Structures
 
         public static String CreateRandomFile(String Name)
         {
-            String FileName = Variables.RandomString(10);
+            try
+            {
+                String FileName = Variables.RandomString(10);
 
-            CreateFile(FileName, Name);
+                CreateFile(FileName, Name);
 
-            return FileName;
+                IsSealFile(FileName);
+
+                return FileName;
+            }
+            catch
+            {
+                return NO_VALUE;
+            }
         }
         #endregion
 
