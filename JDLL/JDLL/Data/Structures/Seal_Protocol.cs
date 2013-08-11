@@ -10,7 +10,7 @@ using JDLL.Exceptions;
 
 namespace JDLL.Data.Structures
 {
-    public class Seal_Protocal
+    public class Seal_Protocol
     {
         public const String NO_VALUE = "N/A";
 
