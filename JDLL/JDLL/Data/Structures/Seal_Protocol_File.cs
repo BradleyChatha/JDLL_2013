@@ -17,6 +17,8 @@ namespace JDLL.Data.Structures
 
         public Seal_Protocol_File(String Path)
         {
+            Seal_Protocol.IsSealFile(Path);
+
             Contents = Seal_Protocol.GetData(Path);
             this.Path = Path;
         }
@@ -31,6 +33,11 @@ namespace JDLL.Data.Structures
 
 
             return PrefixData.ToArray();
+        }
+
+        public String GetName()
+        {
+            return Contents[0].Split(';')[1];
         }
 
         public void DeleteEntry(String Prefix, String Name)
