@@ -40,6 +40,15 @@ namespace JDLL.Data.Structures
             return Contents[0].Split(';')[1];
         }
 
+        public String[] ReadValueFromEntry(String Prefix, String Name, bool withPrefix)
+        {
+            foreach (String s in Contents)
+                if (Seal_Protocol.GetEntryName(s).Equals(Name) && s.StartsWith(Prefix))
+                    return Seal_Protocol.GetEntryData(s, withPrefix);
+
+            return new String[1] { Seal_Protocol.NO_VALUE };
+        }
+
         public void DeleteEntry(String Prefix, String Name)
         {
             List<String> NewContent = new List<String>();
