@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Structures\Seal_Protocol.cs" />
+    <Compile Include="Data\Structures\Seal_Protocol_File.cs" />
     <Compile Include="Exceptions\FileNotSealException.cs" />
     <Compile Include="Exceptions\MalformedEntryException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
