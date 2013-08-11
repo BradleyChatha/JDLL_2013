@@ -96,6 +96,13 @@ namespace JDLL.Data.Structures
                 return NO_VALUE;
             }
         }
+
+        public static Seal_Protocol_File CreateFileInMemory(String Path)
+        {
+            IsSealFile(Path);
+
+            return new Seal_Protocol_File(Path);
+        }
         #endregion
 
         #region Reading
