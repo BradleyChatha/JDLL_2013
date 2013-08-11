@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AC29FA89-73ED-46DF-80BB-442423D51E8E}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{EC99ACF9-4501-43ED-9BA2-6AB5738A77A7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JDLL</RootNamespace>
-    <AssemblyName>JDLL</AssemblyName>
+    <RootNamespace>Testerr</RootNamespace>
+    <AssemblyName>Testerr</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,19 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Structures\Seal_Protocol.cs" />
-    <Compile Include="Data\Structures\Seal_Protocol_File.cs" />
-    <Compile Include="Exceptions\FileNotSealException.cs" />
-    <Compile Include="Exceptions\MalformedEntryException.cs" />
-    <Compile Include="JDLLCPP\SoupDLL.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util\FileIO.cs" />
-    <Compile Include="Util\Variables.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SoupDLL.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JDLL\JDLL.csproj">
+      <Project>{ac29fa89-73ed-46df-80bb-442423d51e8e}</Project>
+      <Name>JDLL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
