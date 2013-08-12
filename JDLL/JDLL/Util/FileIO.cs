@@ -158,6 +158,30 @@ namespace JDLL.Util
             File.WriteAllLines(TempFile, Contents);
             EncryptFile(TempFile, Path, true);
         }
+
+        public String EncryptString(String Input)
+        {
+            String Encrypt = "";
+
+            foreach (Char C in Input)
+                for (int i = 0; i < Letters.Length; i++)
+                    if (C.Equals(Letters[i]))
+                        Encrypt += Encryption[i] + "*";
+
+            return Encrypt;
+        }
+
+        public String DecryptString(String Input)
+        {
+            String Decrypt = "";
+
+            foreach (String S2 in S.Split('*'))
+                for (int i = 0; i < Encryption.Length; i++)
+                    if (S2.Equals(Encryption[i]))
+                        Decrypt += Letters[i];
+
+            return Decrypt;
+        }
         #endregion
     }
 }
