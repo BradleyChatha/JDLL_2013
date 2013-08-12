@@ -159,7 +159,7 @@ namespace JDLL.Util
             EncryptFile(TempFile, Path, true);
         }
 
-        public String EncryptString(String Input)
+        public static String EncryptString(String Input)
         {
             String Encrypt = "";
 
@@ -171,7 +171,7 @@ namespace JDLL.Util
             return Encrypt;
         }
 
-        public String DecryptString(String Input)
+        public static String DecryptString(String Input)
         {
             String Decrypt = "";
 
@@ -181,6 +181,45 @@ namespace JDLL.Util
                         Decrypt += Letters[i];
 
             return Decrypt;
+        }
+
+        public static String[] EncryptString(IEnumerable<String> Input)
+        {
+            List<String> Enc = new List<String>();
+
+
+            foreach (String s in Input)
+            {
+                String Encrypt = "";
+
+                foreach (Char C in s)
+                    for (int i = 0; i < Letters.Length; i++)
+                        if (C.Equals(Letters[i]))
+                            Encrypt += Encryption[i] + "*";
+
+                Enc.Add(Encrypt);
+            }
+
+            return Enc.ToArray();
+        }
+
+        public static String[] DecryptString(IEnumerable<String> Input)
+        {
+            List<String> Dec = new List<String>();
+
+            foreach (String s in Input)
+            {
+                String Decrypt = "";
+
+                foreach (String S2 in s.Split('*'))
+                    for (int i = 0; i < Encryption.Length; i++)
+                        if (S2.Equals(Encryption[i]))
+                            Decrypt += Letters[i];
+
+                Dec.Add(Decrypt);
+            }
+
+            return Dec.ToArray();
         }
         #endregion
     }
