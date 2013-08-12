@@ -20,6 +20,7 @@ namespace JDLL.Data.Structures
             Seal_Protocol.IsSealFile(Path);
 
             Contents = Seal_Protocol.GetData(Path);
+            Contents = FileIO.EncryptString(Contents);
             this.Path = Path;
         }
 
@@ -27,7 +28,7 @@ namespace JDLL.Data.Structures
         {
             List<String> PrefixData = new List<String>();
 
-            foreach (String s in Contents)
+            foreach (String s in FileIO.DecryptString(Contents))
                 if (s.StartsWith(Prefix + ";"))
                     PrefixData.Add(s);
 
@@ -42,7 +43,7 @@ namespace JDLL.Data.Structures
 
         public String[] ReadValueFromEntry(String Prefix, String Name, bool withPrefix)
         {
-            foreach (String s in Contents)
+            foreach (String s in FileIO.DecryptString(Contents))
                 if (Seal_Protocol.GetEntryName(s).Equals(Name) && s.StartsWith(Prefix))
                     return Seal_Protocol.GetEntryData(s, withPrefix);
 
@@ -53,22 +54,22 @@ namespace JDLL.Data.Structures
         {
             List<String> NewContent = new List<String>();
 
-            foreach (String s in Contents)
+            foreach (String s in FileIO.DecryptString(Contents))
                 if (s.StartsWith(Prefix) && Seal_Protocol.GetEntryName(s).Equals(Name))
                     continue;
                 else
                     NewContent.Add(s);
 
-            Contents = NewContent.ToArray();
+            Contents = FileIO.EncryptString(NewContent.ToArray());
         }
 
         public void AddEntry(String Prefix, String Name, String Value)
         {
             List<String> NewContent = new List<String>();
-            NewContent.AddRange(Contents);
+            NewContent.AddRange(FileIO.DecryptString(Contents));
             NewContent.Add(Prefix + ";" + Value + ";NAME=" + Name);
 
-            Contents = NewContent.ToArray();
+            Contents = FileIO.EncryptString(NewContent.ToArray());
         }
 
         public void AddEntry(String Prefix, String Name, IEnumerable<String> Values)
@@ -79,15 +80,15 @@ namespace JDLL.Data.Structures
                 Value += s + ";";
 
             List<String> NewContent = new List<String>();
-            NewContent.AddRange(Contents);
+            NewContent.AddRange(FileIO.DecryptString(Contents));
             NewContent.Add(Prefix + ";" + Value + "NAME=" + Name);
 
-            Contents = NewContent.ToArray();
+            Contents = FileIO.EncryptString(NewContent.ToArray());
         }
 
         public void Save()
         {
-            FileIO.ReplaceAll(Path, Contents);
+            FileIO.ReplaceAll(Path, FileIO.DecryptString(Contents));
         }
 
         public void Close(bool Save)
