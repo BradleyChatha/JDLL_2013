@@ -122,7 +122,16 @@ namespace JDLL.Data.Structures
         public static String[] GetData(String Path)
         {
             IsSealFile(Path);
-            return FileIO.ReadFile(Path);
+            String[] Contents = FileIO.ReadFile(Path);
+            List<String> NewContent = new List<String>();
+
+            foreach (String s in Contents)
+                if (s.StartsWith("NAME"))
+                    continue;
+                else
+                    NewContent.Add(s);
+
+            return NewContent;
         }
 
         public static String[] GetDataWithPrefix(String Path, String Prefix)
@@ -149,7 +158,10 @@ namespace JDLL.Data.Structures
 
             foreach (String s in Data)
                 if (s.StartsWith("NAME"))
-                    Name = s.Split('=')[1];
+                {
+                    String[] Names = s.Split('=');
+                    Name = Names[Names.Length - 1];
+                }
 
             if (Name.Equals(""))
                 throw new MalformedEntryException("Entry is missing \"NAME=\"");

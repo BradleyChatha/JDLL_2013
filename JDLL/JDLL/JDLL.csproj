@@ -43,15 +43,9 @@
     <Compile Include="Data\Structures\Seal_Protocol_File.cs" />
     <Compile Include="Exceptions\FileNotSealException.cs" />
     <Compile Include="Exceptions\MalformedEntryException.cs" />
-    <Compile Include="JDLLCPP\SoupDLL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\FileIO.cs" />
     <Compile Include="Util\Variables.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="SoupDLL.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

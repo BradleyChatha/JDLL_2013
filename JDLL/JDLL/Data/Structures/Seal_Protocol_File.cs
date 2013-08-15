@@ -24,7 +24,7 @@ namespace JDLL.Data.Structures
             this.Path = Path;
         }
 
-        public String[] GetEntryByPrefix(String Prefix)
+        public String[] GetDataByPrefix(String Prefix)
         {
             List<String> PrefixData = new List<String>();
 
@@ -38,7 +38,7 @@ namespace JDLL.Data.Structures
 
         public String GetName()
         {
-            return Contents[0].Split(';')[1];
+            return FileIO.DecryptString(Contents)[0].Split(';')[1];
         }
 
         public String[] ReadValueFromEntry(String Prefix, String Name, bool withPrefix)
@@ -84,6 +84,20 @@ namespace JDLL.Data.Structures
             NewContent.Add(Prefix + ";" + Value + "NAME=" + Name);
 
             Contents = FileIO.EncryptString(NewContent.ToArray());
+        }
+
+        public void ChangeEntryData(String Prefix, String Name, String Value)
+        {
+            DeleteEntry(Prefix, Name);
+
+            AddEntry(Prefix, Name, Value);
+        }
+
+        public void ChangeEntryData(String Prefix, String Name, IEnumerable<String> Values)
+        {
+            DeleteEntry(Prefix, Name);
+
+            AddEntry(Prefix, Name, Values);
         }
 
         public void Save()
