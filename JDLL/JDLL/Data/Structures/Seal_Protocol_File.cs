@@ -126,7 +126,7 @@ namespace JDLL.Data.Structures
             String Name = null;
 
             if (KeepName)
-                Name = Contents[0].Split(';').Last();
+                Name = GetName();
 
             if (Name != null)
                 Contents = new String[] { Name };
@@ -136,7 +136,7 @@ namespace JDLL.Data.Structures
 
         public void CloneFile(String Path)
         {
-            Seal_Protocol.CreateFile(Path, Contents[0].Split(';').Last());
+            Seal_Protocol.CreateFile(Path, GetName());
         }
 
         public void Save()

@@ -164,7 +164,7 @@ namespace JDLL.Data.Structures
                 }
 
             if (Name.Equals(""))
-                throw new MalformedEntryException("Entry is missing \"NAME=\"");
+                throw new MalformedEntryException("Entry is missing \"NAME=\"", Value);
 
             return Name;
         }
@@ -220,7 +220,7 @@ namespace JDLL.Data.Structures
             foreach (String s in Data)
                 if (rand == 1)
                     if (!s.Contains("NAME="))
-                        throw new MalformedEntryException("Entry is missing \"NAME=\"");
+                        throw new MalformedEntryException("Entry is missing \"NAME=\"", s);
                     else
                         rand++;
         }
