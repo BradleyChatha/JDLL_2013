@@ -131,7 +131,7 @@ namespace JDLL.Data.Structures
                 else
                     NewContent.Add(s);
 
-            return NewContent;
+            return NewContent.ToArray();
         }
 
         public static String[] GetDataWithPrefix(String Path, String Prefix)
