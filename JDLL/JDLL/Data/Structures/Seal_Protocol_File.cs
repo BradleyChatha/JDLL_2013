@@ -49,6 +49,28 @@ namespace JDLL.Data.Structures
             return new String[1] { Seal_Protocol.NO_VALUE };
         }
 
+        public Seal_Protocol_File Clone()
+        {
+            return this;
+        }
+
+        public bool DeleteFile()
+        {
+            try
+            {
+                File.Delete(Path);
+
+                Contents = null;
+                Path = null;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public void DeleteEntry(String Prefix, String Name)
         {
             List<String> NewContent = new List<String>();
@@ -97,6 +119,24 @@ namespace JDLL.Data.Structures
             DeleteEntry(Prefix, Name);
 
             AddEntry(Prefix, Name, Values);
+        }
+
+        public void WipeContents(bool KeepName)
+        {
+            String Name = null;
+
+            if (KeepName)
+                Name = Contents[0].Split(';').Last();
+
+            if (Name != null)
+                Contents = new String[] { Name };
+            else
+                Contents = new String[] { "" };
+        }
+
+        public void CloneFile(String Path)
+        {
+            Seal_Protocol.CreateFile(Path, Contents[0].Split(';').Last());
         }
 
         public void Save()
