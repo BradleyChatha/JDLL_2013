@@ -44,8 +44,8 @@
     <Compile Include="Exceptions\FileNotSealException.cs" />
     <Compile Include="Exceptions\MalformedEntryException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util\FileIO.cs" />
-    <Compile Include="Util\Variables.cs" />
+    <Compile Include="Data\FileIO.cs" />
+    <Compile Include="Data\Variables.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

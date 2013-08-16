@@ -6,7 +6,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-using JDLL.Util;
+using JDLL.Data;
 using JDLL.Exceptions;
 
 namespace JDLL.Data.Structures
