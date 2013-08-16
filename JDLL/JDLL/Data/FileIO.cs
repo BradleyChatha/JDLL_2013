@@ -87,26 +87,6 @@ namespace JDLL.Data
             File.Delete(Path + ".bak");
         }
 
-        public static String[] ReadFile(String Path)
-        {
-            String FileName = Variables.RandomString(5);
-
-            DecryptFile(Path, FileName, false);
-
-            String[] Array = File.ReadAllLines(FileName);
-
-            File.Delete(FileName);
-
-            return Array;
-        }
-
-        public static String ReadLine(String Path, int Line)
-        {
-            String[] S = ReadFile(Path);
-
-            return S[Line - 1];
-        }
-
         public static void WriteToFile(String Path, String Write)
         {
             String[] OldContents = ReadFile(Path);
@@ -220,6 +200,26 @@ namespace JDLL.Data
             }
 
             return Dec.ToArray();
+        }
+
+        public static String[] ReadFile(String Path)
+        {
+            String FileName = Variables.RandomString(5);
+
+            DecryptFile(Path, FileName, false);
+
+            String[] Array = File.ReadAllLines(FileName);
+
+            File.Delete(FileName);
+
+            return Array;
+        }
+
+        public static String ReadLine(String Path, int Line)
+        {
+            String[] S = ReadFile(Path);
+
+            return S[Line - 1];
         }
         #endregion
     }
