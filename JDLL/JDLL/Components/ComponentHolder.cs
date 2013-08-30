@@ -11,8 +11,11 @@ namespace JDLL.Components
     {
         volatile List<IComponent> Components = new List<IComponent>();
         volatile bool shouldClose = false;
+        volatile bool Update = false;
 
         volatile object Parent;
+
+        volatile int Count = 0;
 
         public ComponentHolder(object Parent)
         {
@@ -31,8 +34,13 @@ namespace JDLL.Components
 
                 try
                 {
+                    Update = true;
+
                     for (int i = 0; i < Components.ToArray().Length; i++)
-                        Components[i].Update();
+                        if(Components[i].shouldUpdate)
+                            Components[i].Update();
+
+                    Update = false;
 
                     Thread.Sleep(100);
                 }
@@ -40,7 +48,6 @@ namespace JDLL.Components
                 {
                     throw ex;
                 }
-
             }
 
             while (true)
@@ -65,6 +72,8 @@ namespace JDLL.Components
 
         public void Add(IComponent Component)
         {
+            Component.ID = Count;
+            Count++;
             Component.Run(Parent);
             Components.Add(Component);
         }
@@ -74,6 +83,7 @@ namespace JDLL.Components
             for (int i = 0; i < Components.ToArray().Length; i++)
                 if (Components[i].Equals(Name))
                 {
+                    Components[i].Dispose();
                     Components.RemoveAt(i);
                     break;
                 }
@@ -81,7 +91,45 @@ namespace JDLL.Components
 
         public void Remove(IComponent Component)
         {
-            Components.Remove(Component);
+            for (int i = 0; i < Components.ToArray().Length; i++)
+                if (Components[i] == Component)
+                {
+                    Components[i].Dispose();
+                    Components.RemoveAt(i);
+                    break;
+                }
+        }
+
+        public void Remove(int ID)
+        {
+            for (int i = 0; i < Components.ToArray().Length; i++)
+                if (Components[i].ID == Count)
+                {
+                    Components[i].Dispose();
+                    Components.RemoveAt(i);
+                    break;
+                }
+
+            while (Update) { }
+
+            Count = 0;
+
+            for (int i = 0; i < Components.ToArray().Length; i++)
+            {
+                Components[i].ID = Count;
+                Count++;
+            }
+        }
+
+        public IEnumerable<IComponent> GetComponents()
+        {
+            if (!Update)
+                return Components;
+            else
+            {
+                while (Update) { }
+                return Components;
+            }
         }
 
         public void Stop()

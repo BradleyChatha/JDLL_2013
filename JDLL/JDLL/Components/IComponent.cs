@@ -11,6 +11,10 @@ namespace JDLL.Components
         public String Name;
         public String Description;
 
+        public int ID;
+
+        public bool shouldUpdate = true;
+
         public abstract void Run(object Parent);
 
         public abstract void Update();
