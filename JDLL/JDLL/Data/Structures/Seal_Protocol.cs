@@ -115,6 +115,7 @@ namespace JDLL.Data.Structures
             }
             catch(FileNotSealException ex)
             {
+                File.WriteAllLines("Error_GetFileName_JDLL", new String[] {ex.ToString(), "\r\n", ex.Message, "\r\n", ex.StackTrace, "\r\n", ex.InnerException.Message});
                 return NO_VALUE;
             }
         }
