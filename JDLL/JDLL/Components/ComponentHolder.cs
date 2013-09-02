@@ -132,6 +132,15 @@ namespace JDLL.Components
             }
         }
 
+        public IComponent GetComponent(int ID)
+        {
+            for (int i = 0; i < Components.ToArray().Length; i++)
+                if (Components[i].ID == ID)
+                    return Components[i];
+
+            return null;
+        }
+
         public void Stop()
         {
             shouldClose = true;

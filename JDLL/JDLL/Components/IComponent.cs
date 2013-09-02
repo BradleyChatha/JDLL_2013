@@ -12,7 +12,6 @@ namespace JDLL.Components
         public String Description;
 
         public int ID;
-
         public bool shouldUpdate = true;
 
         public abstract void Run(object Parent);
@@ -20,5 +19,11 @@ namespace JDLL.Components
         public abstract void Update();
 
         public abstract void Dispose();
+
+        public void SetDetails(String Name, String Description)
+        {
+            this.Name = Name;
+            this.Description = Description;
+        }
     }
 }
