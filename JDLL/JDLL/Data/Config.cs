@@ -28,8 +28,8 @@ namespace JDLL.Data
         {
             CreateFile();
 
-            if (File.ReadAllLines(FilePath)[0].Equals("[Config]"))
-                throw new MalformedConfigException("Missing [Config] Tag");
+            //if (File.ReadAllText(FilePath).Contains("[Config]"))
+            //    throw new MalformedConfigException("Missing [Config] Tag");
         }
 
         public void WriteValue(String Option, Object Value)
@@ -105,6 +105,44 @@ namespace JDLL.Data
 
             File.WriteAllLines(FilePath, List1);
          }
+
+        public void ChangeValue(String Option, IEnumerable<String> Values)
+        {
+            isValid();
+
+            List<String> List1 = new List<String>();
+            String S = "";
+
+            foreach (String S1 in Values)
+                S += S1 + ";";
+
+            foreach (String s in File.ReadAllLines(FilePath))
+                if (s.StartsWith("[" + Option + "]"))
+                    List1.Add("[" + Option + "]" + "=" + S);
+                else
+                    List1.Add(s);
+
+            File.WriteAllLines(FilePath, List1);
+        }
+
+        public void ChangeValue(String Option, IEnumerable<int> Values)
+        {
+            isValid();
+
+            List<String> List1 = new List<String>();
+            String S = "";
+
+            foreach (int S1 in Values)
+                S += S1.ToString() + ";";
+
+            foreach (String s in File.ReadAllLines(FilePath))
+                if (s.StartsWith("[" + Option + "]"))
+                    List1.Add("[" + Option + "]" + "=" + S);
+                else
+                    List1.Add(s);
+
+            File.WriteAllLines(FilePath, List1);
+        }
 
         public void ClearFile()
         {
