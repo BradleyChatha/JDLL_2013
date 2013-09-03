@@ -13,9 +13,9 @@ namespace JDLL.Data
     {
         String FilePath;
 
-        public Config(String FilePath)
+        public Config(String FileName)
         {
-            this.FilePath = FilePath;
+            this.FilePath = FileName += ".cfg";
         }
 
         public void CreateFile()
@@ -28,8 +28,8 @@ namespace JDLL.Data
         {
             CreateFile();
 
-            //if (File.ReadAllText(FilePath).Contains("[Config]"))
-            //    throw new MalformedConfigException("Missing [Config] Tag");
+            if (!File.ReadAllText(FilePath).Contains("[Config]"))
+                throw new MalformedConfigException("Missing [Config] Tag");
         }
 
         public void WriteValue(String Option, Object Value)
@@ -249,6 +249,23 @@ namespace JDLL.Data
             }
 
             return Obj1;
+        }
+
+        public T Read<T>(String Option)
+        {
+            String[] Array1 = File.ReadAllLines(FilePath);
+
+            String Str1 = "";
+
+            foreach (String s in Array1)
+                if (s.StartsWith("[" + Option + "]"))
+                    Str1 = s.Split('=')[1];
+
+            if (typeof(T) == typeof(int))
+                return (T)((object)Convert.ToInt32(Str1));
+
+
+            return (T)((object) Str1);
         }
     }
 }
