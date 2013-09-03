@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-using JDLL.Data;
+using JDLL.Data.Logging;
 
 namespace JDLL.Exceptions
 {
@@ -22,7 +22,7 @@ namespace JDLL.Exceptions
 
         public void WriteToLog(ref Log Log, String Malformity, String Entry, bool Save = false)
         {
-            Log.Write("JDLL", Malformity + " : Error - Entry = " + Entry, Save);
+            Log.Write("JDLL", Malformity + " : Error - Entry = " + Entry, new SEV_Severe(this), Save);
         }
     }
 }

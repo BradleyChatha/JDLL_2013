@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using JDLL.Data;
+using JDLL.Data.Logging;
 
 namespace JDLL.Exceptions
 {
@@ -20,7 +20,7 @@ namespace JDLL.Exceptions
 
         public void WriteToLog(ref Log Log, String FilePath, bool Save = false)
         {
-            Log.Write("JDLL", "File is not part of the data structure : Error - File = " + FilePath, Save);
+            Log.Write("JDLL", "File is not part of the data structure : Error - File = " + FilePath, new SEV_Severe(this), Save);
         }
     }
 }

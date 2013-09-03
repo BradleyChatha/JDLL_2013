@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using JDLL.Data;
+using JDLL.Data.Logging;
 
 namespace JDLL.Exceptions
 {
@@ -20,7 +20,7 @@ namespace JDLL.Exceptions
 
         public void WriteToLog(ref Log Log, String Value, bool Save = false)
         {
-            Log.Write("JDLL", "Value already exists : Error - Value = " +  "[" + Value + "]", Save);
+            Log.Write("JDLL", "(ValueAlreadyExistsException) Value already exists : Error - Value = " + "[" + Value + "]", new SEV_Severe(this), Save);
         }
     }
 }

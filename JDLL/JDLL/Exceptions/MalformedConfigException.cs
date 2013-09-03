@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-using JDLL.Data;
+using JDLL.Data.Logging;
 
 namespace JDLL.Exceptions
 {
@@ -21,7 +21,7 @@ namespace JDLL.Exceptions
 
         public void WriteToLog(ref Log Log, String FilePath, bool Save = false)
         {
-            Log.Write("JDLL", "File is missing NAME; Entry : Error - File = " + FilePath, Save);
+            Log.Write("JDLL", "File is missing NAME; Entry : Error - File = " + FilePath, new SEV_Severe(this), Save);
         }
     }
 }
