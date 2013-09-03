@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Permissions;
 using System.IO;
 
-namespace JDLL.Data
+namespace JDLL.Data.Logging
 {
     public class Log
     {
@@ -23,12 +23,12 @@ namespace JDLL.Data
             else
                 Contents.AddRange(File.ReadAllLines(FilePath));
 
-            Write("cfg", "Start()", true);
+            Write("cfg", "Start()", new SEV_Info(), true);
         }
 
         public void ChangePath(String FilePath, bool Save = false, bool DeleteOld = false)
         {
-            Write("cfg", "End()", false);
+            Write("cfg", "End()", new SEV_Info(), false);
 
             if (Save)
                 this.Save();
@@ -41,7 +41,7 @@ namespace JDLL.Data
                 Contents.AddRange(File.ReadAllLines(FilePath));
 
             this.FilePath = FilePath;
-            Write("cfg", "Start()", true);
+            Write("cfg", "Start()", new SEV_Info(), true);
         }
 
         public void Write(String Sender, String Message, bool Save = false)
@@ -55,16 +55,27 @@ namespace JDLL.Data
                 this.Save();
         }
 
+        public void Write(String Sender, String Message, ISeverety Severety, bool Save = false)
+        {
+            Write(Sender, Severety.LogInfo + " " + Message, Save);
+
+            if (Severety.ThrowError)
+            {
+                Dispose(true);
+                throw Severety.Error;
+            }
+        }
+
         public void Save()
         {
-            Write("cfg", "Save()");
+            Write("cfg", "Save()", new SEV_Info());
 
             File.WriteAllLines(FilePath, Contents.ToArray());
         }
 
         public void Dispose(bool Save = false)
         {
-            Write("cfg", "End()", Save);
+            Write("cfg", "End()", new SEV_Info(),Save);
 
             FilePath = null;
             Contents = null;
