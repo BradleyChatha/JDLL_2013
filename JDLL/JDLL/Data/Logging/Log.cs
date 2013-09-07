@@ -10,11 +10,18 @@ namespace JDLL.Data.Logging
 {
     public class Log
     {
+        const String LogSender = "log";
+        const String Start = "Start()";
+        const String End = "End()";
+
         public String FilePath { get; private set; }
 
         List<String> Contents = new List<String>();
 
-        public Log(String FilePath, bool DeleteOld = false)
+        public bool WriteWhenSave = true;
+        public bool ThrowErrors = true;
+
+        public Log(String FilePath, bool DeleteOld = false, bool WriteWhenSave = true, bool ThrowErrors = true)
         {
             this.FilePath = FilePath;
 
@@ -23,15 +30,18 @@ namespace JDLL.Data.Logging
             else
                 Contents.AddRange(File.ReadAllLines(FilePath));
 
-            Write("cfg", "Start()", new SEV_Info(), true);
+            this.WriteWhenSave = false;
+            Write(LogSender, Start, new SEV_Info(), true);
+            this.WriteWhenSave = WriteWhenSave;
+            this.ThrowErrors = ThrowErrors;
         }
 
         public void ChangePath(String FilePath, bool Save = false, bool DeleteOld = false)
         {
-            Write("cfg", "End()", new SEV_Info(), false);
+            Write(LogSender, End, new SEV_Info(), false);
 
             if (Save)
-                this.Save();
+                EndSave();
 
             Contents.Clear();
 
@@ -41,7 +51,7 @@ namespace JDLL.Data.Logging
                 Contents.AddRange(File.ReadAllLines(FilePath));
 
             this.FilePath = FilePath;
-            Write("cfg", "Start()", new SEV_Info(), true);
+            Write(LogSender, Start, new SEV_Info(), true);
         }
 
         public void Write(String Sender, String Message, bool Save = false)
@@ -59,8 +69,10 @@ namespace JDLL.Data.Logging
         {
             Write(Sender, Severety.LogInfo + " " + Message, Save);
 
-            if (Severety.ThrowError)
+            if (Severety.ThrowError && ThrowErrors)
             {
+                File.WriteAllLines(FilePath + ".stacktrace", new String[] { Severety.Error.Message, Severety.Error.StackTrace });
+
                 Dispose(true);
                 throw Severety.Error;
             }
@@ -68,17 +80,39 @@ namespace JDLL.Data.Logging
 
         public void Save()
         {
-            Write("cfg", "Save()", new SEV_Info());
+            if(WriteWhenSave)
+                Write(LogSender, "Save()", new SEV_Info());
 
+            File.WriteAllLines(FilePath, Contents.ToArray());
+        }
+
+        public void ForceSave()
+        {
+            Write(LogSender, "Save()", new SEV_Info());
+
+            File.WriteAllLines(FilePath, Contents.ToArray());
+        }
+
+        private void EndSave()
+        {
+            Write(LogSender, "EndSave()", false);
             File.WriteAllLines(FilePath, Contents.ToArray());
         }
 
         public void Dispose(bool Save = false)
         {
-            Write("cfg", "End()", new SEV_Info(),Save);
+            Write(LogSender, End, new SEV_Info(), false);
+
+            if (Save)
+                EndSave();
 
             FilePath = null;
             Contents = null;
+        }
+
+        ~Log()
+        {
+            Dispose(true);
         }
     }
 }

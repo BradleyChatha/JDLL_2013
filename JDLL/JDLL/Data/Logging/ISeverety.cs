@@ -10,7 +10,7 @@ namespace JDLL.Data.Logging
     {
         public String LogInfo = "[Default]";
         public bool ThrowError = false;
-        public Exception Error {get; private set;}
+        public Exception Error { get; private set; }
 
         public void SetError(Exception ex)
         {

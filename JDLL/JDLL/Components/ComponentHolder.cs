@@ -5,10 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
+using JDLL.Data.Logging;
+
 namespace JDLL.Components
 {
     public class ComponentHolder
     {
+        const String Sender = "Comp.Holder";
+
         volatile List<IComponent> Components = new List<IComponent>();
         volatile bool shouldClose = false;
         volatile bool Update = false;
@@ -16,13 +20,21 @@ namespace JDLL.Components
         volatile object Parent;
 
         volatile int Count = 0;
+        public volatile int Timer_Interval = 100;
 
-        public ComponentHolder(object Parent)
+        volatile Log Log;
+
+        public ComponentHolder(object Parent, Log Log = null)
         {
             this.Parent = Parent;
 
+            if (Log != null)
+                this.Log = Log;
+
             Thread Starter = new Thread(new ThreadStart(() => Start()));
             Starter.Start();
+
+            WriteToLog(Sender, "Started", null, true);
         }
 
         private void Start()
@@ -42,10 +54,11 @@ namespace JDLL.Components
 
                     Update = false;
 
-                    Thread.Sleep(100);
+                    Thread.Sleep(Timer_Interval);
                 }
                 catch(Exception ex)
                 {
+                    WriteToLog(Sender, ex.Message, new SEV_Severe(ex), true);
                     throw ex;
                 }
             }
@@ -65,6 +78,7 @@ namespace JDLL.Components
                 }
                 catch (Exception ex)
                 {
+                    WriteToLog(Sender, ex.Message, new SEV_Severe(ex), true);
                     throw ex;
                 }
             }
@@ -76,39 +90,54 @@ namespace JDLL.Components
             Count++;
             Component.Run(Parent);
             Components.Add(Component);
+
+            WriteToLog(Sender, "Component Added - Name = " + Component.Name, null, false);
         }
 
         public void Remove(String Name)
         {
+            while (Update) { }
+
             for (int i = 0; i < Components.ToArray().Length; i++)
-                if (Components[i].Equals(Name))
+                if (Components[i].Name.Equals(Name))
                 {
                     Components[i].Dispose();
                     Components.RemoveAt(i);
+                    WriteToLog(Sender, "Component Removed - Name = " + Components[i].Name, null, false);
                     break;
                 }
         }
 
+        [Obsolete("Currently does not work, can potentially cause a crash", true)]
         public void Remove(IComponent Component)
         {
+            while (Update) { }
+
+            int Backup = Component.ID;
+
             for (int i = 0; i < Components.ToArray().Length; i++)
+            {
+                Component.ID = i;
+
                 if (Components[i] == Component)
                 {
                     Components[i].Dispose();
                     Components.RemoveAt(i);
+                    WriteToLog(Sender, "Component Removed - Name = " + Component.Name, null, false);
                     break;
                 }
+            }
+
+            Component.ID = Backup;
         }
 
         public void Remove(int ID)
         {
-            for (int i = 0; i < Components.ToArray().Length; i++)
-                if (Components[i].ID == Count)
-                {
-                    Components[i].Dispose();
-                    Components.RemoveAt(i);
-                    break;
-                }
+            while (Update) { }
+
+            Components[ID].Dispose();
+            Components.RemoveAt(ID);
+            WriteToLog(Sender, "Component Removed - Name = " + Components[ID].Name, null, false);
 
             while (Update) { }
 
@@ -144,6 +173,34 @@ namespace JDLL.Components
         public void Stop()
         {
             shouldClose = true;
+            WriteToLog(Sender, "Stopped", new SEV_Info(), true);
+        }
+
+        public void WriteToLog(String Sender, String Message, ISeverety Severety, bool Save = false)
+        {
+            if (Severety == null)
+                Severety = new SEV_Info();
+
+
+            if (Log != null)
+            {
+                Log.Write(Sender, Message, Severety, Save);
+            }
+        }
+
+        ~ComponentHolder()
+        {
+            if(!shouldClose)
+                Stop();
+
+            shouldClose = true;
+
+            Thread.Sleep(200);
+
+            Components = null;
+            Parent = null;
+            Count = 0;
+            Log = null;
         }
     }
 }

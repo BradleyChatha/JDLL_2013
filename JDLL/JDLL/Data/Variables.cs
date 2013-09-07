@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security;
+using System.Security.Cryptography;
 
 namespace JDLL.Data
 {
@@ -77,6 +79,14 @@ namespace JDLL.Data
 
             return Encoder.GetBytes(S);
         }
+
+        public static byte[] MD5Hash(String ToHash)
+        {
+            UTF8Encoding utf8 = new UTF8Encoding();
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+
+            return md5.ComputeHash(utf8.GetBytes(ToHash));
+        }
         #endregion
 
         #region int
@@ -111,6 +121,22 @@ namespace JDLL.Data
 
             return Count;
         }
+        #endregion
+
+        #region T
+
+        public static T Random<T>(IEnumerable<T> Enumerator)
+        {
+            Random Rand = new Random();
+
+            List<T> List1 = new List<T>();
+
+            foreach (T Value in Enumerator)
+                List1.Add(Value);
+
+            return List1[Rand.Next(List1.ToArray().Length)];
+        }
+
         #endregion
     }
 }

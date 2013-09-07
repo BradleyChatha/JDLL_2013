@@ -6,16 +6,24 @@ using System.Text;
 using System.IO;
 
 using JDLL.Exceptions;
+using JDLL.Data.Logging;
 
 namespace JDLL.Data
 {
     public class Config
     {
         String FilePath;
+        Log Log;
 
         public Config(String FileName)
         {
             this.FilePath = FileName += ".cfg";
+        }
+
+        public Config(String FileName, Log Log)
+        {
+            this.FilePath = FileName += ".cfg";
+            this.Log = Log;
         }
 
         public void CreateFile()
@@ -29,31 +37,53 @@ namespace JDLL.Data
             CreateFile();
 
             if (!File.ReadAllText(FilePath).Contains("[Config]"))
-                throw new MalformedConfigException("Missing [Config] Tag");
+                if (Log != null)
+                    new MalformedConfigException().WriteToLog(ref Log, FilePath, false);
+                else
+                    throw new MalformedConfigException("Missing [Config] Tag");
         }
 
-        public void WriteValue(String Option, Object Value)
+        public void WriteValue(String Key, Object Value)
         {
             isValid();
 
             foreach (String s in File.ReadAllLines(FilePath))
-                if (s.Split('=')[0].Equals("[" + Option + "]"))
-                    throw new ValueAlreadyExistsException("[" + Option + "]" + " Already exists, Call ChangeValue() if you need to edit a value");
+                if (s.Split('=')[0].Equals("[" + Key + "]"))
+                    if (Log != null)
+                    {
+                        new ValueAlreadyExistsException().WriteToLog(ref Log, Key, false);
+
+                        if (!Log.ThrowErrors)
+                            return;
+                    }
+                    else
+                        throw new ValueAlreadyExistsException("[" + Key + "]" + " Already exists, Call ChangeValue() if you need to edit a value");
 
             List<String> List1 = new List<String>();
             List1.AddRange(File.ReadAllLines(FilePath));
-            List1.Add("[" + Option + "]" + "=" + Value);
+            List1.Add("[" + Key + "]" + "=" + Value);
+
+            if (Log != null)
+                Log.Write("cfg", "Entry: " + "[" + Key + "]" + "=" + Value + " :Was Added to: " + FilePath, new SEV_Info(), false);
 
             File.WriteAllLines(FilePath, List1.ToArray());
         }
 
-        public void WriteValue(String Option, IEnumerable<String> Enumerator)
+        public void WriteValue(String Key, IEnumerable<String> Enumerator)
         {
             isValid();
 
             foreach (String s in File.ReadAllLines(FilePath))
-                if (s.Split('=')[0].Equals("[" + Option + "]"))
-                    throw new ValueAlreadyExistsException("[" + Option + "]" + " Already exists, Call ChangeValue() if you need to edit a value");
+                if (s.Split('=')[0].Equals("[" + Key + "]"))
+                    if (Log != null)
+                    {
+                        new ValueAlreadyExistsException().WriteToLog(ref Log, Key, false);
+
+                        if (!Log.ThrowErrors)
+                            return;
+                    }
+                    else
+                        throw new ValueAlreadyExistsException("[" + Key + "]" + " Already exists, Call ChangeValue() if you need to edit a value");
 
             List<String> List1 = new List<String>();
             
@@ -64,18 +94,29 @@ namespace JDLL.Data
             foreach (String V in Enumerator)
                 Str1 += V + ";";
 
-            List1.Add("[" + Option + "]" + "=" + Str1);
+            List1.Add("[" + Key + "]" + "=" + Str1);
+
+            if (Log != null)
+                Log.Write("cfg", "Entry: " + "[" + Key + "]" + "=" + Str1 + " :Was Added to: " + FilePath, new SEV_Info(), false);
 
             File.WriteAllLines(FilePath, List1.ToArray());
         }
 
-        public void WriteValue(String Option, IEnumerable<int> Enumerator)
+        public void WriteValue(String Key, IEnumerable<int> Enumerator)
         {
             isValid();
 
             foreach (String s in File.ReadAllLines(FilePath))
-                if (s.Split('=')[0].Equals("[" + Option + "]"))
-                    throw new ValueAlreadyExistsException("[" + Option + "]" + " Already exists, Call ChangeValue() if you need to edit a value");
+                if (s.Split('=')[0].Equals("[" + Key + "]"))
+                    if (Log != null)
+                    {
+                        new ValueAlreadyExistsException().WriteToLog(ref Log, Key, false);
+
+                        if (!Log.ThrowErrors)
+                            return;
+                    }
+                    else
+                        throw new ValueAlreadyExistsException("[" + Key + "]" + " Already exists, Call ChangeValue() if you need to edit a value");
 
             List<String> List1 = new List<String>();
 
@@ -86,27 +127,53 @@ namespace JDLL.Data
             foreach (int V in Enumerator)
                 Str1 += V.ToString() + ";";
 
-            List1.Add("[" + Option + "]" + "=" + Str1);
+            List1.Add("[" + Key + "]" + "=" + Str1);
+
+            if (Log != null)
+                Log.Write("cfg", "Entry: " + "[" + Key + "]" + "=" + Str1 + " :Was Added to: " + FilePath, new SEV_Info(), false);
 
             File.WriteAllLines(FilePath, List1.ToArray());
         }
 
-        public void ChangeValue(String Option, Object Value)
+        public void WriteIfNoneExistant(String Key, Object Value)
+        {
+            if (!DoesKeyExist(Key))
+                WriteValue(Key, Value);
+        }
+
+        public void WriteIfNoneExistant(String Key, IEnumerable<String> Enumerator)
+        {
+            if (!DoesKeyExist(Key))
+                WriteValue(Key, Enumerator);
+        }
+
+        public void WriteIfNoneExistant(String Key, IEnumerable<int> Enumerator)
+        {
+            if (!DoesKeyExist(Key))
+                WriteValue(Key, Enumerator);
+        }
+
+        public void ChangeValue(String Key, Object Value)
         {
             isValid();
 
             List<String> List1 = new List<String>();
 
             foreach (String s in File.ReadAllLines(FilePath))
-                if (s.StartsWith("[" + Option + "]"))
-                    List1.Add("[" + Option + "]" + "=" + Value);
+                if (s.StartsWith("[" + Key + "]"))
+                {
+                    if (Log != null)
+                        Log.Write("cfg", "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + Value + " :In: " + FilePath, new SEV_Info(), false);
+
+                    List1.Add("[" + Key + "]" + "=" + Value);
+                }
                 else
                     List1.Add(s);
 
             File.WriteAllLines(FilePath, List1);
          }
 
-        public void ChangeValue(String Option, IEnumerable<String> Values)
+        public void ChangeValue(String Key, IEnumerable<String> Values)
         {
             isValid();
 
@@ -117,15 +184,20 @@ namespace JDLL.Data
                 S += S1 + ";";
 
             foreach (String s in File.ReadAllLines(FilePath))
-                if (s.StartsWith("[" + Option + "]"))
-                    List1.Add("[" + Option + "]" + "=" + S);
+                if (s.StartsWith("[" + Key + "]"))
+                {
+                    if (Log != null)
+                        Log.Write("cfg", "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + S + " :In: " + FilePath, new SEV_Info(), false);
+
+                    List1.Add("[" + Key + "]" + "=" + S);
+                }
                 else
                     List1.Add(s);
 
             File.WriteAllLines(FilePath, List1);
         }
 
-        public void ChangeValue(String Option, IEnumerable<int> Values)
+        public void ChangeValue(String Key, IEnumerable<int> Values)
         {
             isValid();
 
@@ -136,136 +208,193 @@ namespace JDLL.Data
                 S += S1.ToString() + ";";
 
             foreach (String s in File.ReadAllLines(FilePath))
-                if (s.StartsWith("[" + Option + "]"))
-                    List1.Add("[" + Option + "]" + "=" + S);
+                if (s.StartsWith("[" + Key + "]"))
+                {
+                    if (Log != null)
+                        Log.Write("cfg", "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + S + " :In: " + FilePath, new SEV_Info(), false);
+
+                    List1.Add("[" + Key + "]" + "=" + S);
+                }
                 else
                     List1.Add(s);
 
             File.WriteAllLines(FilePath, List1);
         }
 
+        public void DeleteValue(String Key)
+        {
+            String[] Contents = File.ReadAllLines(FilePath);
+            List<String> Contents1 = new List<String>();
+
+            foreach (String s in Contents)
+            {
+                if (!s.StartsWith("[" + Key + "]"))
+                    Contents1.Add(s);
+            }
+
+            File.WriteAllLines(FilePath, Contents1);
+        }
+
         public void ClearFile()
         {
             File.Delete(FilePath);
 
+            if (Log != null)
+                Log.Write("cfg", FilePath + " Cleared", new SEV_Info(), true);
+
             CreateFile();
         }
 
-        public Object Parse(String Option)
+        public bool DoesKeyExist(String Key)
+        {
+            bool Return = false;
+
+            foreach (String s in File.ReadAllLines(FilePath))
+                if (s.StartsWith("[" + Key + "]"))
+                    Return = true;
+
+            return Return;
+        }
+
+        public Object Parse(String Key)
         {
             isValid();
 
-            String[] Array1 = File.ReadAllLines(FilePath);
-
-            Object Obj1 = null;
-            int Null;
-
-            foreach (String s in Array1)
+            try
             {
-                String[] Array2 = s.Split('=');
+                String[] Array1 = File.ReadAllLines(FilePath);
 
-                if (Array2[0].Equals("[" + Option + "]"))
+                Object Obj1 = null;
+                int Null;
+
+                foreach (String s in Array1)
                 {
-                    if (Array2[1].ToLower().Equals("true"))
+                    String[] Array2 = s.Split('=');
+
+                    if (Array2[0].Equals("[" + Key + "]"))
                     {
-                        if (Array2[1].Contains(';'))
+                        if (Array2[1].ToLower().Equals("true"))
                         {
-                            List<Boolean> List1 = new List<Boolean>();
-
-                            foreach (String s2 in Array2[1].Split(';'))
+                            if (Array2[1].Contains(';'))
                             {
-                                if(!String.IsNullOrEmpty(s2))
-                                List1.Add(Convert.ToBoolean(s2));
+                                List<Boolean> List1 = new List<Boolean>();
+
+                                foreach (String s2 in Array2[1].Split(';'))
+                                {
+                                    if (!String.IsNullOrEmpty(s2))
+                                        List1.Add(Convert.ToBoolean(s2));
+                                }
+
+                                Obj1 = List1;
                             }
+                            else
+                                Obj1 = true;
 
-                            Obj1 = List1;
+                            break;
                         }
-                        else
-                            Obj1 = true;
 
-                        break;
-                    }
-
-                    else if (Array2[1].ToLower().Equals("false"))
-                    {
-                        if (Array2[1].Contains(';'))
+                        else if (Array2[1].ToLower().Equals("false"))
                         {
-                            List<Boolean> List1 = new List<Boolean>();
-
-                            foreach (String s2 in Array2[1].Split(';'))
+                            if (Array2[1].Contains(';'))
                             {
-                                if (!String.IsNullOrEmpty(s2))
-                                List1.Add(Convert.ToBoolean(s2));
+                                List<Boolean> List1 = new List<Boolean>();
+
+                                foreach (String s2 in Array2[1].Split(';'))
+                                {
+                                    if (!String.IsNullOrEmpty(s2))
+                                        List1.Add(Convert.ToBoolean(s2));
+                                }
+
+                                Obj1 = List1;
                             }
+                            else
+                                Obj1 = false;
 
-                            Obj1 = List1;
+                            break;
                         }
-                        else
-                            Obj1 = false;
 
-                        break;
-                    }
-
-                    else if (int.TryParse(Array2[1], out Null))
-                    {
-                        if (Array2[1].Contains(';'))
+                        else if (int.TryParse(Array2[1], out Null))
                         {
-                            List<int> List1 = new List<int>();
-
-                            foreach (String s2 in Array2[1].Split(';'))
+                            if (Array2[1].Contains(';'))
                             {
-                                if (!String.IsNullOrEmpty(s2))
-                                List1.Add(Convert.ToInt32(s2));
+                                List<int> List1 = new List<int>();
+
+                                foreach (String s2 in Array2[1].Split(';'))
+                                {
+                                    if (!String.IsNullOrEmpty(s2))
+                                        List1.Add(Convert.ToInt32(s2));
+                                }
+
+                                Obj1 = List1;
                             }
+                            else
+                                Obj1 = Convert.ToInt32(Array2[1]);
 
-                            Obj1 = List1;
+                            break;
                         }
+
                         else
-                            Obj1 = Convert.ToInt32(Array2[1]);
-
-                        break;
-                    }
-
-                    else
-                    {
-                        if (Array2[1].Contains(';'))
                         {
-                            List<String> List1 = new List<String>();
-
-                            foreach (String s2 in Array2[1].Split(';'))
+                            if (Array2[1].Contains(';'))
                             {
-                                if (!String.IsNullOrEmpty(s2))
-                                List1.Add(s2);
+                                List<String> List1 = new List<String>();
+
+                                foreach (String s2 in Array2[1].Split(';'))
+                                {
+                                    if (!String.IsNullOrEmpty(s2))
+                                        List1.Add(s2);
+                                }
+
+                                Obj1 = List1;
                             }
+                            else
+                                Obj1 = Array2[1];
 
-                            Obj1 = List1;
+                            break;
                         }
-                        else
-                            Obj1 = Array2[1];
-
-                        break;
                     }
                 }
-            }
 
-            return Obj1;
+                return Obj1;
+            }
+            catch(Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.Write("cfg", "An Error has Occured " + ex.Message, new SEV_Severe(ex), false);
+                }
+
+                throw ex;
+            }
         }
 
-        public T Read<T>(String Option)
+        public T Read<T>(String Key)
         {
-            String[] Array1 = File.ReadAllLines(FilePath);
+            try
+            {
+                String[] Array1 = File.ReadAllLines(FilePath);
 
-            String Str1 = "";
+                String Str1 = "";
 
-            foreach (String s in Array1)
-                if (s.StartsWith("[" + Option + "]"))
-                    Str1 = s.Split('=')[1];
+                foreach (String s in Array1)
+                    if (s.StartsWith("[" + Key + "]"))
+                        Str1 = s.Split('=')[1];
 
-            if (typeof(T) == typeof(int))
-                return (T)((object)Convert.ToInt32(Str1));
+                if (typeof(T) == typeof(int))
+                    return (T)((object)Convert.ToInt32(Str1));
 
 
-            return (T)((object) Str1);
+                return (T)((object)Str1);
+            }
+            catch (Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.Write("cfg", "An Error has Occured ", new SEV_Severe(ex), false);
+                }
+
+                throw ex;
+            }
         }
     }
 }
