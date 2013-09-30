@@ -12,6 +12,9 @@ namespace JDLL.Data
 {
     public class Config
     {
+        public const char Splitter = '☼';
+        public const String LogID = "cfg";
+
         String FilePath;
         Log Log;
 
@@ -64,7 +67,7 @@ namespace JDLL.Data
             List1.Add("[" + Key + "]" + "=" + Value);
 
             if (Log != null)
-                Log.Write("cfg", "Entry: " + "[" + Key + "]" + "=" + Value + " :Was Added to: " + FilePath, new SEV_Info(), false);
+                Log.Write(LogID, "Entry: " + "[" + Key + "]" + "=" + Value + " :Was Added to: " + FilePath, new SEV_Info(), false);
 
             File.WriteAllLines(FilePath, List1.ToArray());
         }
@@ -92,12 +95,12 @@ namespace JDLL.Data
             List1.AddRange(File.ReadAllLines(FilePath));
 
             foreach (String V in Enumerator)
-                Str1 += V + ";";
+                Str1 += V + Splitter;
 
             List1.Add("[" + Key + "]" + "=" + Str1);
 
             if (Log != null)
-                Log.Write("cfg", "Entry: " + "[" + Key + "]" + "=" + Str1 + " :Was Added to: " + FilePath, new SEV_Info(), false);
+                Log.Write(LogID, "Entry: " + "[" + Key + "]" + "=" + Str1 + " :Was Added to: " + FilePath, new SEV_Info(), false);
 
             File.WriteAllLines(FilePath, List1.ToArray());
         }
@@ -125,12 +128,12 @@ namespace JDLL.Data
             List1.AddRange(File.ReadAllLines(FilePath));
 
             foreach (int V in Enumerator)
-                Str1 += V.ToString() + ";";
+                Str1 += V.ToString() + Splitter;
 
             List1.Add("[" + Key + "]" + "=" + Str1);
 
             if (Log != null)
-                Log.Write("cfg", "Entry: " + "[" + Key + "]" + "=" + Str1 + " :Was Added to: " + FilePath, new SEV_Info(), false);
+                Log.Write(LogID, "Entry: " + "[" + Key + "]" + "=" + Str1 + " :Was Added to: " + FilePath, new SEV_Info(), false);
 
             File.WriteAllLines(FilePath, List1.ToArray());
         }
@@ -163,7 +166,7 @@ namespace JDLL.Data
                 if (s.StartsWith("[" + Key + "]"))
                 {
                     if (Log != null)
-                        Log.Write("cfg", "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + Value + " :In: " + FilePath, new SEV_Info(), false);
+                        Log.Write(LogID, "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + Value + " :In: " + FilePath, new SEV_Info(), false);
 
                     List1.Add("[" + Key + "]" + "=" + Value);
                 }
@@ -181,13 +184,13 @@ namespace JDLL.Data
             String S = "";
 
             foreach (String S1 in Values)
-                S += S1 + ";";
+                S += S1 + Splitter;
 
             foreach (String s in File.ReadAllLines(FilePath))
                 if (s.StartsWith("[" + Key + "]"))
                 {
                     if (Log != null)
-                        Log.Write("cfg", "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + S + " :In: " + FilePath, new SEV_Info(), false);
+                        Log.Write(LogID, "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + S + " :In: " + FilePath, new SEV_Info(), false);
 
                     List1.Add("[" + Key + "]" + "=" + S);
                 }
@@ -205,13 +208,13 @@ namespace JDLL.Data
             String S = "";
 
             foreach (int S1 in Values)
-                S += S1.ToString() + ";";
+                S += S1.ToString() + Splitter;
 
             foreach (String s in File.ReadAllLines(FilePath))
                 if (s.StartsWith("[" + Key + "]"))
                 {
                     if (Log != null)
-                        Log.Write("cfg", "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + S + " :In: " + FilePath, new SEV_Info(), false);
+                        Log.Write(LogID, "Entry: " + s + " :Was Changed to: " + "[" + Key + "]" + "=" + S + " :In: " + FilePath, new SEV_Info(), false);
 
                     List1.Add("[" + Key + "]" + "=" + S);
                 }
@@ -240,18 +243,34 @@ namespace JDLL.Data
             File.Delete(FilePath);
 
             if (Log != null)
-                Log.Write("cfg", FilePath + " Cleared", new SEV_Info(), true);
+                Log.Write(LogID, FilePath + " Cleared", new SEV_Info(), true);
 
             CreateFile();
         }
 
-        public bool DoesKeyExist(String Key)
+        public void RemoveLog()
+        {
+            Log.ForceSave();
+            Log = null;
+        }
+
+        public bool DoesKeyExist(String Key, bool ThrowError = false)
         {
             bool Return = false;
+
+            isValid();
 
             foreach (String s in File.ReadAllLines(FilePath))
                 if (s.StartsWith("[" + Key + "]"))
                     Return = true;
+
+            if (!Return && ThrowError)
+            {
+                if(Log != null)
+                    new ValueDoesntExistException().WriteToLog(ref Log, Key, true);
+
+                throw new ValueDoesntExistException(Key + " doesn't exist");
+            }
 
             return Return;
         }
@@ -259,6 +278,9 @@ namespace JDLL.Data
         public Object Parse(String Key)
         {
             isValid();
+
+            if (!DoesKeyExist(Key))
+                return null;
 
             try
             {
@@ -275,11 +297,11 @@ namespace JDLL.Data
                     {
                         if (Array2[1].ToLower().Equals("true"))
                         {
-                            if (Array2[1].Contains(';'))
+                            if (Array2[1].Contains(Splitter))
                             {
                                 List<Boolean> List1 = new List<Boolean>();
 
-                                foreach (String s2 in Array2[1].Split(';'))
+                                foreach (String s2 in Array2[1].Split(Splitter))
                                 {
                                     if (!String.IsNullOrEmpty(s2))
                                         List1.Add(Convert.ToBoolean(s2));
@@ -295,11 +317,11 @@ namespace JDLL.Data
 
                         else if (Array2[1].ToLower().Equals("false"))
                         {
-                            if (Array2[1].Contains(';'))
+                            if (Array2[1].Contains(Splitter))
                             {
                                 List<Boolean> List1 = new List<Boolean>();
 
-                                foreach (String s2 in Array2[1].Split(';'))
+                                foreach (String s2 in Array2[1].Split(Splitter))
                                 {
                                     if (!String.IsNullOrEmpty(s2))
                                         List1.Add(Convert.ToBoolean(s2));
@@ -313,13 +335,13 @@ namespace JDLL.Data
                             break;
                         }
 
-                        else if (int.TryParse(Array2[1], out Null))
+                        else if (Int32.TryParse(Array2[1], out Null))
                         {
-                            if (Array2[1].Contains(';'))
+                            if (Array2[1].Contains(Splitter))
                             {
                                 List<int> List1 = new List<int>();
 
-                                foreach (String s2 in Array2[1].Split(';'))
+                                foreach (String s2 in Array2[1].Split(Splitter))
                                 {
                                     if (!String.IsNullOrEmpty(s2))
                                         List1.Add(Convert.ToInt32(s2));
@@ -335,11 +357,11 @@ namespace JDLL.Data
 
                         else
                         {
-                            if (Array2[1].Contains(';'))
+                            if (Array2[1].Contains(Splitter))
                             {
                                 List<String> List1 = new List<String>();
 
-                                foreach (String s2 in Array2[1].Split(';'))
+                                foreach (String s2 in Array2[1].Split(Splitter))
                                 {
                                     if (!String.IsNullOrEmpty(s2))
                                         List1.Add(s2);
@@ -361,7 +383,7 @@ namespace JDLL.Data
             {
                 if (Log != null)
                 {
-                    Log.Write("cfg", "An Error has Occured " + ex.Message, new SEV_Severe(ex), false);
+                    Log.Write(LogID, "An Error has Occured " + ex.Message, new SEV_Severe(ex), false);
                 }
 
                 throw ex;
@@ -370,6 +392,9 @@ namespace JDLL.Data
 
         public T Read<T>(String Key)
         {
+            if (!DoesKeyExist(Key))
+                return default(T);
+
             try
             {
                 String[] Array1 = File.ReadAllLines(FilePath);
@@ -380,9 +405,36 @@ namespace JDLL.Data
                     if (s.StartsWith("[" + Key + "]"))
                         Str1 = s.Split('=')[1];
 
-                if (typeof(T) == typeof(int))
+                if (typeof(T) == typeof(int) || typeof(T) == typeof(long))
                     return (T)((object)Convert.ToInt32(Str1));
 
+                if (typeof(T) == typeof(float))
+                    return (T)((object)float.Parse(Str1));
+
+                if (typeof(T) == typeof(bool))
+                    return (T)((object)Boolean.Parse(Str1));
+
+                if (typeof(T) == typeof(int[]))
+                {
+                    List<int> Ints = new List<int>();
+
+                    foreach (String s in Str1.Split(Splitter))
+                        if (!String.IsNullOrEmpty(s))
+                            Ints.Add(Convert.ToInt32(s));
+
+                    return (T)((object)Ints.ToArray());
+                }
+
+                if (typeof(T) == typeof(String[]))
+                {
+                    List<String> Strings = new List<String>();
+
+                    foreach (String s in Str1.Split(Splitter))
+                        if (!String.IsNullOrEmpty(s))
+                            Strings.Add(s);
+
+                    return (T)((object)Strings.ToArray());
+                }
 
                 return (T)((object)Str1);
             }
@@ -390,7 +442,7 @@ namespace JDLL.Data
             {
                 if (Log != null)
                 {
-                    Log.Write("cfg", "An Error has Occured ", new SEV_Severe(ex), false);
+                    Log.Write(LogID, "An Error has Occured ", new SEV_Severe(ex), false);
                 }
 
                 throw ex;

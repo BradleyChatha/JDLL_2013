@@ -27,6 +27,7 @@ namespace JDLL
             else
             {
                 File.Delete("Version.txt");
+
                 return true;
             }
         }

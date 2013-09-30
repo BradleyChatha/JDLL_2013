@@ -36,7 +36,7 @@ namespace JDLL.Data.Logging
             this.ThrowErrors = ThrowErrors;
         }
 
-        public void ChangePath(String FilePath, bool Save = false, bool DeleteOld = false)
+        public void ChangePath(String FilePath, bool Save = true, bool DeleteOld = false)
         {
             Write(LogSender, End, new SEV_Info(), false);
 
@@ -56,13 +56,19 @@ namespace JDLL.Data.Logging
 
         public void Write(String Sender, String Message, bool Save = false)
         {
-            String DDMM = DateTime.Now.ToString("dd/MM") + "\t";
-            String HHMMSS = DateTime.Now.ToString("HH:mm:ss" + "\t");
+            try
+            {
+                String DDMM = DateTime.Now.ToString("dd/MM") + "\t";
+                String HHMMSS = DateTime.Now.ToString("HH:mm:ss" + "\t");
 
-            Contents.Add(DDMM + HHMMSS + Sender + ":\t" + Message);
+                Contents.Add(DDMM + HHMMSS + Sender + ":\t" + Message);
 
-            if (Save)
-                this.Save();
+                if (Save)
+                    this.Save();
+            }
+            catch
+            { 
+            }
         }
 
         public void Write(String Sender, String Message, ISeverety Severety, bool Save = false)
@@ -95,7 +101,7 @@ namespace JDLL.Data.Logging
 
         private void EndSave()
         {
-            Write(LogSender, "EndSave()", false);
+            Write(LogSender, "EndSave()", new SEV_Info(), false);
             File.WriteAllLines(FilePath, Contents.ToArray());
         }
 

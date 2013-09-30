@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using JDLL.Data;
 using JDLL.Exceptions;
+using JDLL.InternalSecurity;
 
 namespace JDLL.Data.Structures
 {
@@ -226,5 +227,10 @@ namespace JDLL.Data.Structures
                         rand++;
         }
         #endregion
+
+        public static void Verify(Security Sec)
+        {
+            FileIO.Verify(Sec);
+        }
     }
 }

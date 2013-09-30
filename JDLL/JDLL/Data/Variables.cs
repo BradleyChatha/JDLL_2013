@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security;
 using System.Security.Cryptography;
+using System.IO;
 
 namespace JDLL.Data
 {
@@ -66,18 +67,44 @@ namespace JDLL.Data
 
         public static String BytetoString(byte[] bytes)
         {
-            ASCIIEncoding Encoder = new ASCIIEncoding();
+            char[] Chars = new char[bytes.Length / sizeof(char)];
 
-            return Encoder.GetString(bytes);
+            System.Buffer.BlockCopy(bytes, 0, Chars, 0, bytes.Length);
+
+            return new String(Chars);
+        }
+
+        public static String StringtoBinaryString(String Input)
+        {
+            String toReturn = "";
+
+            foreach (Char c in Input)
+            {
+                toReturn += Convert.ToString(c, 2).PadLeft(8, '0');
+            }
+
+            return toReturn;
+        }
+
+        public static String ToBase64String(String Input)
+        {
+            return Convert.ToBase64String(StringtoByte(Input));
+        }
+
+        public static String Base64ToString(String Input)
+        {
+            return BytetoString(Convert.FromBase64String(Input));
         }
         #endregion
 
         #region Byte
         public static byte[] StringtoByte(String S)
         {
-            ASCIIEncoding Encoder = new ASCIIEncoding();
+            byte[] Bytes = new byte[S.Length * sizeof(char)];
 
-            return Encoder.GetBytes(S);
+            System.Buffer.BlockCopy(S.ToCharArray(), 0, Bytes, 0, Bytes.Length);
+
+            return Bytes;
         }
 
         public static byte[] MD5Hash(String ToHash)
@@ -137,6 +164,40 @@ namespace JDLL.Data
             return List1[Rand.Next(List1.ToArray().Length)];
         }
 
+        #endregion
+
+        #region Encryption
+        public static String GetHash(String ToHash, byte[] Salt)
+        {
+            byte[] Input = StringtoByte(ToHash);
+
+            List<byte> Hash = new List<byte>();
+
+            foreach (byte B in Input)
+            {
+                Hash.Add(B);
+            }
+
+            foreach (byte B in Salt)
+            {
+                Hash.Add(B);
+            }
+
+            return BytetoString(MD5Hash(Convert.ToBase64String(Hash.ToArray())));
+        }
+
+        public static void CreatePasswordFile(String FilePath, String Password, String Salt)
+        {
+            File.WriteAllText(FilePath, GetHash(Password, StringtoByte(Salt)));
+        }
+
+        public static bool ComparePasswords(String FilePath, String Password, String Salt)
+        {
+            String InputHash = GetHash(Password, StringtoByte(Salt));
+            String FileHash = File.ReadAllText(FilePath);
+
+            return (InputHash.Equals(FileHash));
+        }
         #endregion
     }
 }

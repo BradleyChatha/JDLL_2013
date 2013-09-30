@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="JDLL" GeneratedClassName="Access">
+  <Profiles />
+  <Settings>
+    <Setting Name="Pass1" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">3ayeVcpxBGQm7tq4</Value>
+    </Setting>
+    <Setting Name="Pass2" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">rQBgjKuIkGZo326E</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
