@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
 
 using JDLL.Data.Logging;
 using JDLL.Data;
@@ -16,10 +17,12 @@ namespace JDLL.SealScript
         public Log Log = null;
         public Config Config = null;
         public Dictionary<String, ScriptMethod> EngineMethods = new Dictionary<String, ScriptMethod>();
+        public Dictionary<String, ScriptInstance> EngineScripts = new Dictionary<String, ScriptInstance>();
+        public Dictionary<String, bool> DebugInfo = new Dictionary<String, bool>();
 
         internal Dictionary<String, String> Variables = new Dictionary<String, String>();
 
-        public bool Debug = true;
+        public bool Debugs = true;
 
         public Engine()
         {
@@ -44,6 +47,25 @@ namespace JDLL.SealScript
             AddMethod(new ScriptMethod(OutputLine), "outputln");
             AddMethod(new ScriptMethod(Output), "output");
             AddMethod(new ScriptMethod(MsgBox), "msgbox");
+            AddMethod(new ScriptMethod(RunExe), "runApp");
+            AddMethod(new ScriptMethod(Speak), "speak");
+            AddMethod(new ScriptMethod(EngineInternal), "engine");
+            AddMethod(new ScriptMethod(DeleteFile), "deletef");
+            AddMethod(new ScriptMethod(MoveFile), "movef");
+            AddMethod(new ScriptMethod(SetDebug), "setDebugStatus");
+            #endregion
+
+            #region Debug
+            DebugInfo["START"] = true;
+            DebugInfo["VARIABLE"] = true;
+            DebugInfo["EXECUTE"] = true;
+            DebugInfo["RESOLVE"] = true;
+            DebugInfo["CLEARED"] = true;
+            DebugInfo["DISCOVERED"] = true;
+            DebugInfo["CALL"] = true;
+            DebugInfo["PARAMETER"] = true;
+            DebugInfo["END"] = true;
+            DebugInfo["RETURN"] = true;
             #endregion
         }
 
@@ -81,20 +103,20 @@ namespace JDLL.SealScript
         }
 
         #region Methods that can be outside the instance class
-        void EngineDebug(String[] Parameters)
+        void EngineDebug(String[] Parameters, ScriptInstance Sender = null)
         {
             if (Parameters[0].Equals(Variables["FAL"]))
             {
-                Debug = false;
+                Debugs = false;
             }
 
             if (Parameters[0].Equals(Variables["TRU"]))
             {
-                Debug = true;
+                Debugs = true;
             }
         }
 
-        void RunScript(String[] Parameters)
+        void RunScript(String[] Parameters, ScriptInstance Sender = null)
         {
             if (!Parameters[0].EndsWith(".seal"))
             {
@@ -104,7 +126,7 @@ namespace JDLL.SealScript
             Run(Parameters[0]);
         }
 
-        void WriteToConfig(String[] Parameters)
+        void WriteToConfig(String[] Parameters, ScriptInstance Sender = null)
         {
             if (Config != null)
             {
@@ -119,17 +141,17 @@ namespace JDLL.SealScript
             }
         }
 
-        void ClearConsole(String[] Parameters)
+        void ClearConsole(String[] Parameters, ScriptInstance Sender = null)
         {
             Console.Clear();
         }
 
-        void OutputLine(String[] Parameters)
+        void OutputLine(String[] Parameters, ScriptInstance Sender = null)
         {
             Console.Write("\r\n");
         }
 
-        void Output(String[] Parameters)
+        void Output(String[] Parameters, ScriptInstance Sender = null)
         {
             if (Parameters.Length == 2)
             {
@@ -142,9 +164,104 @@ namespace JDLL.SealScript
             Console.WriteLine(Parameters[0], true);
         }
 
-        void MsgBox(String[] Parameters)
+        void MsgBox(String[] Parameters, ScriptInstance Sender = null)
         {
             Win32.MessageBox(new IntPtr(0), Parameters[0], Parameters[1], 0);
+        }
+
+        void RunExe(String[] Parameters, ScriptInstance Sender = null)
+        {
+            Process.Start(Parameters[0]);
+        }
+
+        void Speak(String[] Parameters, ScriptInstance Sender = null)
+        {
+            if (Parameters.Length > 1)
+            {
+                Util.Volume = Convert.ToInt32(Parameters[1]);
+            }
+
+            Util.Speak(Parameters[0]);
+        }
+
+        // Loads/Unloads Scripts Also runs scripts, checks if script exists
+        void EngineInternal(String[] Parameters, ScriptInstance Sender = null)
+        {
+            if (Parameters[0].ToLower().Equals("load"))
+            {
+                EngineScripts.Add(Parameters[1], new ScriptInstance(Parameters[2], null, this));
+                EngineScripts[Parameters[1]].Execute(false);
+            }
+
+            if (Parameters[0].ToLower().Equals("unload"))
+            {
+                EngineScripts[Parameters[1]].Dispose();
+                EngineScripts.Remove(Parameters[1]);
+            }
+
+            if (Parameters[0].ToLower().Equals("run"))
+            {
+                EngineScripts[Parameters[1]].ParseCall("." + Parameters[2] + "()");
+            }
+
+            if (Parameters[0].ToLower().Equals("scriptexist"))
+            {
+                if (EngineScripts.ContainsKey(Parameters[1]))
+                {
+                    Sender.SetVariable(Parameters[2], Variables["TRU"]);
+                }
+                else
+                {
+                    Sender.SetVariable(Parameters[2], Variables["FAL"]);
+                }
+            }
+        }
+
+        void DeleteFile(String[] Parameters, ScriptInstance Sender = null)
+        {
+            File.Delete(Parameters[0]);
+        }
+
+        void MoveFile(String[] Parameters, ScriptInstance Sender = null)
+        {
+            File.Move(Parameters[0], Parameters[1]);
+        }
+
+        void SetDebug(String[] Parameters, ScriptInstance Sender = null)
+        {
+            if (DebugInfo.ContainsKey(Parameters[0]))
+            {
+                if (Parameters[1].Equals("TRU") || Parameters[1].Equals(Variables["TRU"]))
+                {
+                    DebugInfo[Parameters[0]] = true;
+                }
+                else
+                {
+                    DebugInfo[Parameters[0]] = false;
+                }
+            }
+        }
+        #endregion
+
+        #region Debug
+        public bool Debug(String Key)
+        {
+            return (DebugInfo[Key] && this.Debugs);
+        }
+
+        public void SetDebug(String Key, bool Value)
+        {
+            DebugInfo[Key.ToUpper()] = Value;
+        }
+
+        public void AddDebug(String Key, bool Value)
+        {
+            DebugInfo[Key] = Value;
+        }
+
+        public void RemoveDebug(String Key)
+        {
+            DebugInfo.Remove(Key);
         }
         #endregion
 

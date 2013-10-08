@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+
 namespace JDLL.SealScript
 {
-    public delegate void ScriptMethod(String[] Parameters);
+    public delegate void ScriptMethod(String[] Parameters, ScriptInstance Sender = null);
 
     public class ScriptInstance : IDisposable
     {
@@ -30,6 +32,8 @@ namespace JDLL.SealScript
         private String FilePath;
         private String[] Contents;
 
+        private bool _Run = true;
+
         public ScriptInstance(String FilePath, String[] Parameters, Engine Engine)
         {
             Contents = File.ReadAllLines(FilePath);
@@ -49,8 +53,18 @@ namespace JDLL.SealScript
             this.EngineMethods = Engine.EngineMethods;
         }
 
-        public void Execute()
+        public void SetVariable(String Key, String Value)
         {
+            Variables[Key] = ParseInfo(Value, true);
+        }
+
+        public void Execute(bool Disposes = true)
+        {
+            if (Engine.Debug("START"))
+            {
+                Console.WriteLine("START " + FilePath);
+            }
+
             DiscoverMethods();
             ExecuteMethod(".DATA");
 
@@ -59,7 +73,7 @@ namespace JDLL.SealScript
                 Variables[s.Key] = s.Value;
             }
 
-            if (Engine.Debug)
+            if (Engine.Debug("VARIABLE"))
             {
                 foreach (KeyValuePair<String, object> Entry in Variables)
                 {
@@ -68,14 +82,23 @@ namespace JDLL.SealScript
             }
 
             ExecuteMethod(".Main");
-            Dispose();
+
+            if (Disposes)
+            {
+                Dispose();
+            }
         }
 
         private void ExecuteMethod(String Name)
         {
             List<String> CurrentMethod = new List<String>();
 
-            if (Engine.Debug)
+            if (!_Run)
+            {
+                return;
+            }
+
+            if (Engine.Debug("EXECUTE"))
             {
                 Console.WriteLine("EXECUTE " + Name);
             }
@@ -164,6 +187,16 @@ namespace JDLL.SealScript
                 {
                     Word++;
 
+                    if (!_Run)
+                    {
+                        if (Engine.Debug("RETURN"))
+                        {
+                            Console.WriteLine("RETURN " + Name);
+                        }
+
+                        break;
+                    }
+
                     if (s9.Equals("call"))
                     {
                         ParseCall(Instructions[1]);
@@ -173,7 +206,7 @@ namespace JDLL.SealScript
                     {
                         Variables[Instructions[Word - 1]] = ParseInfo(Instructions[Word].Split(StringDef)[1], false);
 
-                        if (Engine.Debug)
+                        if (Engine.Debug("VARIABLE"))
                         {
                             Console.WriteLine("VARIABLE " + Instructions[Word - 1]);
                         }
@@ -181,7 +214,7 @@ namespace JDLL.SealScript
                 }
             }
 
-            if (Engine.Debug)
+            if (Engine.Debug("RESOLVE"))
             {
                 Console.WriteLine("RESOLVE " + Name);
             }
@@ -201,7 +234,7 @@ namespace JDLL.SealScript
             {
                 Variables.Remove(s10);
 
-                if (Engine.Debug)
+                if (Engine.Debug("CLEARED"))
                 {
                     Console.WriteLine("CLEARED " + s10);
                 }
@@ -238,7 +271,7 @@ namespace JDLL.SealScript
                 }
             }
 
-            if (Engine.Debug)
+            if (Engine.Debug("DISCOVERED"))
             {
                 foreach (KeyValuePair<String, int[]> Entry in Methods)
                 {
@@ -249,8 +282,23 @@ namespace JDLL.SealScript
 
         public void ParseCall(String Method)
         {
+            if (Method.StartsWith("**"))
+            {
+                return;
+            }
+
+            if (!_Run)
+            {
+                return;
+            }
+
             String[] Info = Method.Split('(', ')');
             String[] Data = Info[1].Split(ParamSeperator);
+
+            if (Engine.Debug("CALL"))
+            {
+                Console.WriteLine("CALL " + Method);
+            }
 
             int Counter = 0;
 
@@ -264,7 +312,7 @@ namespace JDLL.SealScript
                     Counter++;
                     Variables[Info[0] + "%Param" + Counter] = ParseInfo(s, true);
 
-                    if (Engine.Debug)
+                    if (Engine.Debug("PARAMETER"))
                     {
                         Console.WriteLine(String.Concat("PARAMETER " + Info[0] + "%Param" + Counter));
                     }
@@ -283,7 +331,7 @@ namespace JDLL.SealScript
                     Params.Add(ParseInfo(s, true));
                 }
 
-                EngineMethods[Info[0]].Invoke(Params.ToArray());
+                EngineMethods[Info[0]].Invoke(Params.ToArray(), this);
                 return;
             }
 
@@ -465,7 +513,7 @@ namespace JDLL.SealScript
 
             if (Method.StartsWith(".set("))
             {
-                Variables[ParseInfo(Data[0], false)] = ParseInfo(Data[1], true);
+                Variables[ParseInfo(Data[0], true)] = ParseInfo(Data[1], true);
             }
 
             if (Method.StartsWith(".while("))
@@ -488,7 +536,7 @@ namespace JDLL.SealScript
 
                 if (ParseInfo(Data[1], false).Equals(Variables["NE"]))
                 {
-                    while (Convert.ToInt32(ParseInfo(Data[0], true)) != Convert.ToInt32(ParseInfo(Data[2], true)))
+                    while (!ParseInfo(Data[0], true).Equals(ParseInfo(Data[2], true)))
                     {
                         ExecuteMethod(ParseInfo(Data[3], true));
                     }
@@ -497,12 +545,12 @@ namespace JDLL.SealScript
 
             if (Method.StartsWith(".toUpper("))
             {
-                Variables[ParseInfo(Data[1], false)] = ParseInfo(Data[0], true).ToUpper();
+                Variables[ParseInfo(Data[1], true)] = ParseInfo(Data[0], true).ToUpper();
             }
 
             if (Method.StartsWith(".toLower("))
             {
-                Variables[ParseInfo(Data[1], false)] = ParseInfo(Data[0], true).ToLower();
+                Variables[ParseInfo(Data[1], true)] = ParseInfo(Data[0], true).ToLower();
             }
 
             if (Method.StartsWith(".combine("))
@@ -536,6 +584,52 @@ namespace JDLL.SealScript
             if (Method.StartsWith(".confRead(") && Engine.Config != null)
             {
                 Variables[ParseInfo(Data[1], false)] = Engine.Config.Read<String>(Data[0]);
+            }
+
+            if (Method.StartsWith(".wait("))
+            {
+                Thread.Sleep(Convert.ToInt32(ParseInfo(Data[0], true)));
+            }
+
+            if (Method.StartsWith(".getDebugStatus("))
+            {
+                if (Engine.DebugInfo[ParseInfo(Data[0], true)])
+                {
+                    Variables[ParseInfo(Data[1], true)] = Variables["TRU"];
+                }
+                else
+                {
+                    Variables[ParseInfo(Data[1], true)] = Variables["FAL"];
+                }
+            }
+
+            if (Method.StartsWith(".rand("))
+            {
+                Random Rand = new Random();
+
+                if (Data.Length == 1)
+                {
+                    Variables[ParseInfo(Data[0], true)] = Convert.ToString(Rand.Next());
+                    return;
+                }
+
+                if (Data.Length == 2)
+                {
+                    Variables[ParseInfo(Data[0], true)] = Convert.ToString(Rand.Next(Convert.ToInt32(ParseInfo(Data[1], true))));
+                    return;
+                }
+
+                if (Data.Length == 3)
+                {
+                    Variables[ParseInfo(Data[0], true)] = Convert.ToString(Rand.Next(Convert.ToInt32(ParseInfo(Data[1], true)), Convert.ToInt32(ParseInfo(Data[2], true))));
+                    return;
+                }
+            }
+
+            if (Method.StartsWith(".return("))
+            {
+                _Run = false;
+                return;
             }
             #endregion
         }
@@ -575,6 +669,11 @@ namespace JDLL.SealScript
 
         public void Dispose()
         {
+            if (Engine.Debug("END"))
+            {
+                Console.WriteLine("END " + FilePath);
+            }
+
             Contents = null;
             Variables = null;
             Methods = null;

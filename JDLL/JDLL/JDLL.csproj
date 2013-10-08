@@ -72,6 +72,7 @@
     <Compile Include="InternalSecurity\ACLEV_NONE.cs" />
     <Compile Include="InternalSecurity\ACLEV_PRIV.cs" />
     <Compile Include="InternalSecurity\ACLEV_VIP.cs" />
+    <Compile Include="InternalSecurity\IJClass.cs" />
     <Compile Include="InternalSecurity\Security.cs" />
     <Compile Include="JDLLHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
