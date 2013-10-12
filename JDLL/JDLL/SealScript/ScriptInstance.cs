@@ -68,17 +68,17 @@ namespace JDLL.SealScript
             DiscoverMethods();
             ExecuteMethod(".DATA");
 
-            foreach (KeyValuePair<String, String> s in Engine.Variables)
-            {
-                Variables[s.Key] = s.Value;
-            }
-
             if (Engine.Debug("VARIABLE"))
             {
                 foreach (KeyValuePair<String, object> Entry in Variables)
                 {
                     Console.WriteLine("VARIABLE " + Entry.Key + " " + Entry.Value);
                 }
+            }
+
+            foreach (KeyValuePair<String, String> s in Engine.Variables)
+            {
+                Variables[s.Key] = s.Value;
             }
 
             ExecuteMethod(".Main");

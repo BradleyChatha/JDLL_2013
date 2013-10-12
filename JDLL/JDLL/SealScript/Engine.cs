@@ -189,8 +189,8 @@ namespace JDLL.SealScript
         {
             if (Parameters[0].ToLower().Equals("load"))
             {
-                EngineScripts.Add(Parameters[1], new ScriptInstance(Parameters[2], null, this));
-                EngineScripts[Parameters[1]].Execute(false);
+                EngineScripts.Add(Parameters[2], new ScriptInstance(Parameters[1], null, this));
+                EngineScripts[Parameters[2]].Execute(false);
             }
 
             if (Parameters[0].ToLower().Equals("unload"))
@@ -201,7 +201,14 @@ namespace JDLL.SealScript
 
             if (Parameters[0].ToLower().Equals("run"))
             {
-                EngineScripts[Parameters[1]].ParseCall("." + Parameters[2] + "()");
+                if (!Parameters[2].StartsWith("."))
+                {
+                    EngineScripts[Parameters[1]].ParseCall("." + Parameters[2] + "()");
+                }
+                else
+                {
+                    EngineScripts[Parameters[1]].ParseCall(Parameters[2] + "()");
+                }
             }
 
             if (Parameters[0].ToLower().Equals("scriptexist"))
