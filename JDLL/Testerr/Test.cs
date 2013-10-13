@@ -12,11 +12,13 @@ namespace Testerr
     class Test : IComponent
     {
         Program Prog;
+        String Message;
 
-        public Test()
+        public Test(String Message)
         {
             this.Name = "Test";
             this.Description = "This is a test Description";
+            this.Message = Message;
         }
 
         public override void Run(object Parent)
@@ -26,6 +28,7 @@ namespace Testerr
 
         public override void Update()
         {
+            Console.WriteLine(Message);
         }
 
         public override void Dispose()

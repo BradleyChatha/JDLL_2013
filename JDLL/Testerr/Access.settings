@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Testerr" GeneratedClassName="Access">
+  <Profiles />
+  <Settings>
+    <Setting Name="Pass1" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">3ayeVcpxBGQm7tq4</Value>
+    </Setting>
+    <Setting Name="Pass2" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">rQBgjKuIkGZo326E</Value>
+    </Setting>
+    <Setting Name="GUID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">dcc97b1d-7e2c-411c-99ef-54949d5b0295</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

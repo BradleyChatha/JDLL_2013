@@ -41,10 +41,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Access.Designer.cs">
+      <DependentUpon>Access.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Access.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Access.Designer.cs</LastGenOutput>
+    </None>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
