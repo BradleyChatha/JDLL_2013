@@ -61,10 +61,8 @@
     <Compile Include="Data\Logging\SEV_Severe.cs" />
     <Compile Include="Data\Logging\SEV_Info.cs" />
     <Compile Include="Data\Logging\SEV_Warning.cs" />
-    <Compile Include="Data\Structures\Seal_Protocol.cs" />
-    <Compile Include="Data\Structures\Seal_Protocol_File.cs" />
+    <Compile Include="Data\Resource.cs" />
     <Compile Include="Exceptions\MalformedConfigException.cs" />
-    <Compile Include="Exceptions\FileNotSealException.cs" />
     <Compile Include="Exceptions\MalformedEntryException.cs" />
     <Compile Include="Exceptions\ValueAlreadyExistsException.cs" />
     <Compile Include="Exceptions\ValueDoesntExistException.cs" />
