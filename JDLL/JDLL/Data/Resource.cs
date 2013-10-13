@@ -232,19 +232,19 @@ namespace JDLL.Data
 
                 foreach (String s in Contents)
                 {
-                    if (s.StartsWith(this._EntryMarker + h.Value.HEADERNAME))
+                    if (s.StartsWith(this._EntryMarker + h.Value.HEADERNAME)) // If the entrys HEADERNAME is the same as the current header (h)
                     {
-                        New.Add(s);
-                        Paragraph = true;
+                        New.Add(s); // Add the line into New
+                        Paragraph = true; // Set the flag to make a paragraph after adding all the entries of the current header
                     }
                 }
 
-                if (Paragraph)
+                if (Paragraph) // If the flag for a new line is true
                 {
-                    New.Add("");
+                    New.Add(""); // Make a new line to seperate the next entries
                 }
 
-                Paragraph = false;
+                Paragraph = false; // Reset the flag
             }
 
             File.Create(this._FileName).Dispose(); // Empties the file
@@ -260,7 +260,7 @@ namespace JDLL.Data
                     "\t" + "TYPE" + this._Tab + Heads[i].TYPE,
                     "\t" + "FILENAME" + "\t\t" + "string",
                     "}\n"
-                });
+                }); // Write the headers back in
             }
 
             New2.AddRange(New); // Add the organised Entries
