@@ -264,7 +264,8 @@ namespace JDLL.Data
             }
 
             New2.AddRange(New); // Add the organised Entries
-            File.WriteAllLines(this._FileName, New2.ToArray()); // Write the new contents 'New2' into the file
+
+            File.WriteAllLines(this._FileName, New2); // Write the new contents 'New2' into the file
         }
 
         /// <summary>
