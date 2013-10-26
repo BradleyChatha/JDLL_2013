@@ -25,12 +25,12 @@ namespace JDLL.SealScript
         private const String Parameter = "%";
         private const String VariableValue = "*";
 
-        private Dictionary<String, object> Variables = new Dictionary<String, object>();
-        private Dictionary<String, int[]> Methods = new Dictionary<String, int[]>();
-        private Dictionary<String, ScriptMethod> EngineMethods = new Dictionary<String, ScriptMethod>();
+        internal Dictionary<String, object> Variables = new Dictionary<String, object>();
+        internal Dictionary<String, int[]> Methods = new Dictionary<String, int[]>();
+        internal Dictionary<String, ScriptMethod> EngineMethods = new Dictionary<String, ScriptMethod>();
         private Engine Engine;
         private String FilePath;
-        private String[] Contents;
+        internal String[] Contents;
 
         private bool _Run = true;
 
