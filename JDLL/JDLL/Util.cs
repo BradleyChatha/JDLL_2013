@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 using System.Speech.Synthesis;
+using System.IO;
 
 namespace JDLL
 {
@@ -19,6 +21,14 @@ namespace JDLL
             Talk.Speak(Phrase);
 
             Talk.Dispose();
+        }
+
+        public static void DownloadFile(String url, String file)
+        {
+            using (WebClient wc = new WebClient())
+            {
+                wc.DownloadFile(url, file);
+            }
         }
     }
 }
