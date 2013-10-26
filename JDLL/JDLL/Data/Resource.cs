@@ -88,7 +88,7 @@ namespace JDLL.Data
         {
             if (!this.Entries.ContainsKey(key) || !File.Exists(this.Entries[key].FILENAME)) // Making sure the key AND the file exist
             {
-                throw new ArgumentException(key + " doesn't exist"); // If not throw an exception
+                throw new KeyNotFoundException(key + " doesn't exist"); // If not throw an exception
             }
 
             return File.ReadAllBytes(this.Entries[key].FILENAME); // Return the bytes of the file 'key' is associated to
@@ -103,7 +103,7 @@ namespace JDLL.Data
         {
             if (!this.Entries.ContainsKey(key) || !File.Exists(this.Entries[key].FILENAME)) // Making sure the key AND the file exist
             {
-                throw new ArgumentException(key + " doesn't exist"); // If not throw an exception
+                throw new KeyNotFoundException(key + " doesn't exist"); // If not throw an exception
             }
 
             return File.ReadAllLines(this.Entries[key].FILENAME); // Return the contents of the file 'key' is associated to
@@ -120,7 +120,7 @@ namespace JDLL.Data
         {
             if (!this.Entries.ContainsKey(key) || !File.Exists(this.Entries[key].FILENAME)) // Making sure the key AND the file exist
             {
-                throw new ArgumentException(key + " doesn't exist"); // If not throw an exception
+                throw new KeyNotFoundException(key + " doesn't exist"); // If not throw an exception
             }
 
             return new FileStream(this.Entries[key].FILENAME, mode); // Create a file stream of the file associated to 'key' and return it
@@ -171,7 +171,7 @@ namespace JDLL.Data
         {
             if (!this.Headers.ContainsKey(header)) // Making sure the header exists
             {
-                throw new ArgumentException(header + " does not exist"); // Throw an error if it doesn't
+                throw new KeyNotFoundException(header + " does not exist"); // Throw an error if it doesn't
             }
 
             if (this.Entries.ContainsKey(key)) // Making sure the Entry doesn't exist
@@ -224,7 +224,7 @@ namespace JDLL.Data
             List<String> New = new List<String>(); // Organised Entries
             List<Header> Heads = new List<Header>(); // Getting the used Headers
 
-            bool Paragraph = false; // Make a new line to seperate the Entries
+            bool Paragraph = false; // Flag for making a new line in the file
 
             foreach (KeyValuePair<String, Header> h in this.Headers)
             {

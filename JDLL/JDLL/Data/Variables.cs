@@ -114,6 +114,13 @@ namespace JDLL.Data
 
             return md5.ComputeHash(utf8.GetBytes(ToHash));
         }
+
+        public static byte[] MD5Hash(byte[] ToHash)
+        {
+            MD5CryptoServiceProvider crypt = new MD5CryptoServiceProvider();
+
+            return crypt.ComputeHash(ToHash);
+        }
         #endregion
 
         #region int
