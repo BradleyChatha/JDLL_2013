@@ -5,11 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-using JDLL.InternalSecurity;
-
 namespace JDLL.Data
 {
-    public class FileIO : IJClass
+    public class FileIO
     {
         #region Encryption
         internal static char[] Letters = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', '"', '!', ' ', '(', ')', ';', '=', '{', '}', '*', '\'' };
@@ -17,7 +15,7 @@ namespace JDLL.Data
         
         public static void EncryptFile(String Path, String Output, bool DeleteOrigin)
         {
-            if (hasAccess)
+            
             {
                 List<String> Contents = new List<String>();
 
@@ -42,7 +40,7 @@ namespace JDLL.Data
 
         public static void DecryptFile(String Path, String Output, bool DeleteEncryptedFile)
         {
-            if (hasAccess)
+            
             {
                 List<String> Contents = new List<String>();
 
@@ -67,7 +65,7 @@ namespace JDLL.Data
 
         public static void MultiEncrypt(String Path, String Output, bool DeleteOrigin, int Number)
         {
-            if (hasAccess)
+            
             {
                 File.Copy(Path, Path + ".bak");
 
@@ -85,7 +83,7 @@ namespace JDLL.Data
 
         public static void MultiDecrypt(String Path, String Output, bool DeleteEncryptedFile, int Number)
         {
-            if (hasAccess)
+            
             {
                 File.Copy(Path, Path + ".bak");
 
@@ -103,7 +101,7 @@ namespace JDLL.Data
 
         public static void WriteToFile(String Path, String Write)
         {
-            if (hasAccess)
+            
             {
                 String[] OldContents = ReadFile(Path);
                 String TempFile = Variables.RandomString(6);
@@ -120,7 +118,7 @@ namespace JDLL.Data
 
         public static void WriteToFile(String Path, IEnumerable<String> Write)
         {
-            if (hasAccess)
+            
             {
                 String[] OldContents = ReadFile(Path);
                 String TempFile = Variables.RandomString(6);
@@ -137,7 +135,7 @@ namespace JDLL.Data
 
         public static void CreateFile(String Path, String Contents)
         {
-            if (hasAccess)
+            
             {
                 String TempFile = Variables.RandomString(4);
 
@@ -148,7 +146,7 @@ namespace JDLL.Data
 
         public static void CreateFile(String Path, IEnumerable<String> Contents)
         {
-            if (hasAccess)
+            
             {
                 String TempFile = Variables.RandomString(10);
 
@@ -159,7 +157,7 @@ namespace JDLL.Data
 
         public static void ReplaceAll(String Path, IEnumerable<String> Contents)
         {
-            if (hasAccess)
+            
             {
                 String TempFile = Variables.RandomString(3);
 
@@ -170,7 +168,7 @@ namespace JDLL.Data
 
         public static String EncryptString(String Input)
         {
-            if (hasAccess)
+            
             {
                 String Encrypt = "";
 
@@ -182,12 +180,12 @@ namespace JDLL.Data
                 return Encrypt;
             }
 
-            return null;
+            
         }
 
         public static String DecryptString(String Input)
         {
-            if (hasAccess)
+            
             {
                 String Decrypt = "";
 
@@ -199,12 +197,12 @@ namespace JDLL.Data
                 return Decrypt;
             }
 
-            return null;
+            
         }
 
         public static String[] EncryptString(IEnumerable<String> Input)
         {
-            if (hasAccess)
+            
             {
                 List<String> Enc = new List<String>();
 
@@ -224,12 +222,12 @@ namespace JDLL.Data
                 return Enc.ToArray();
             }
 
-            return null;
+            
         }
 
         public static String[] DecryptString(IEnumerable<String> Input)
         {
-            if (hasAccess)
+            
             {
                 List<String> Dec = new List<String>();
 
@@ -248,12 +246,12 @@ namespace JDLL.Data
                 return Dec.ToArray();
             }
 
-            return null;
+            
         }
 
         public static String[] ReadFile(String Path)
         {
-            if (hasAccess)
+            
             {
                 String FileName = Variables.RandomString(5);
 
@@ -266,19 +264,19 @@ namespace JDLL.Data
                 return Array;
             }
 
-            return null;
+            
         }
 
         public static String ReadLine(String Path, int Line)
         {
-            if (hasAccess)
+            
             {
                 String[] S = ReadFile(Path);
 
                 return S[Line - 1];
             }
 
-            return null;
+            
         }
         #endregion
     }

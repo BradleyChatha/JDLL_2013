@@ -95,6 +95,22 @@ namespace JDLL.Data
         {
             return BytetoString(Convert.FromBase64String(Input));
         }
+
+        public static String CalculateMD5(String Input)
+        {
+            MD5CryptoServiceProvider Encoder = new MD5CryptoServiceProvider();
+            byte[] Bytes = Encoding.ASCII.GetBytes(Input);
+            byte[] Hash = Encoder.ComputeHash(Bytes);
+
+            StringBuilder Stringed = new StringBuilder();
+
+            for (int i = 0; i < Hash.Length; i++)
+            {
+                Stringed.Append(Hash[i].ToString("X2"));
+            }
+
+            return Stringed.ToString();
+        }
         #endregion
 
         #region Byte
