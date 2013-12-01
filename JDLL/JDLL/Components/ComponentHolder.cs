@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Threading;
 
 using JDLL.Data.Logging;
-using JDLL.InternalSecurity;
 
 namespace JDLL.Components
 {
@@ -18,7 +17,7 @@ namespace JDLL.Components
         volatile bool shouldClose = false;
         volatile bool Update = false;
 
-        volatile bool hasPermission = false;
+        volatile bool hasPermission = true;
 
         volatile object Parent;
 
@@ -27,15 +26,13 @@ namespace JDLL.Components
 
         volatile Log Log;
 
-        public ComponentHolder(object Parent, Security Sec, Log Log = null)
+        public ComponentHolder(object Parent, Log Log = null)
         {
             this.Parent = Parent;
 
             if (Log != null)
                 this.Log = Log;
 
-            if (Sec.GetLevel().Equals(Security.Priviledged))
-                hasPermission = true;
 
             if (hasPermission)
             {

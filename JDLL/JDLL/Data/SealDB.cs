@@ -79,9 +79,9 @@ namespace JDLL.Data
 
         Dictionary<String, Group> _Groups = new Dictionary<String, Group>();
 
-        public SealDB(String filename)
+        public SealDB(String filename, bool GiveExt = true)
         {
-            if (!filename.EndsWith(_Extention))
+            if (!filename.EndsWith(_Extention) && GiveExt)
             {
                 filename += _Extention;
             }
@@ -167,6 +167,19 @@ namespace JDLL.Data
             _Groups[group].Members[name] = new Member(name);
 
             return;
+        }
+
+        /// <summary>
+        /// Writes the value to the Database file regardless of it existing
+        /// </summary>
+        /// <param name="group">Group to look for the Member in</param>
+        /// <param name="member">Member to hold the value</param>
+        /// <param name="valueName">Name of the value</param>
+        /// <param name="value">Value of the value</param>
+        public void ChangeOrWriteValue(String group, String member, String valueName, String value)
+        {
+            this.DeleteValue(group, member, valueName);
+            this.WriteValue(group, member, valueName, value);
         }
 
         public void DeleteValue(String group, String member, String valueName)
