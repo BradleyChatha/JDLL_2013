@@ -7,9 +7,9 @@ using System.IO;
 
 namespace JDLL.Data.Content
 {
-    public interface IContentProcessor<T>
+    public abstract class IContentProcessor<T>
     {
-        public T Import(BinaryReader br);
-        public void Export(BinaryWriter bw);
+         public abstract T Import(BinaryReader br);
+         public abstract void Export(BinaryWriter bw, T data);
     }
 }
