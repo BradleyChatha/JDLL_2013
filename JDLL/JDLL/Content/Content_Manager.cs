@@ -20,6 +20,13 @@ namespace JDLL.Content
         public Content_Manager(String filename)
         {
             this.Filename = filename;
+            this.FillNames();
+
+            this.RegisterProcessor(new StringProcessor());
+
+            #region Debug
+            File.WriteAllLines("Debug.txt", Names.ToArray());
+            #endregion
         }
 
         public void RegisterProcessor(IContentProcessor processor)
@@ -35,7 +42,7 @@ namespace JDLL.Content
                 return;
             }
 
-            if (!this.Processors.ContainsKey(name))
+            if (!this.Processors.ContainsKey(processorTypeName))
             {
                 // TODO: Add exception to throw
                 return;
@@ -46,12 +53,31 @@ namespace JDLL.Content
                 using (BinaryWriter bw = new BinaryWriter(fs))
                 {
                     bw.Write(Content_Manager.op_Start);
-                    bw.Write(name);
-                    bw.Write(this.Processors[processorTypeName].TypeName());
+                    Helper.WriteString(name, bw);
+                    Helper.WriteString((this.Processors[processorTypeName].TypeName()), bw);
 
                     this.Processors[processorTypeName].Export(bw, data);
 
                     bw.Write(Content_Manager.op_End);
+                }
+            }
+        }
+
+        private void FillNames()
+        {
+            using (FileStream fs = new FileStream(this.Filename, FileMode.OpenOrCreate))
+            {
+                using (BinaryReader br = new BinaryReader(fs))
+                {
+                    while (br.PeekChar() != -1)
+                    {
+                        ushort Num = br.ReadUInt16();
+
+                        if (Num == Content_Manager.op_Start)
+                        {
+                            this.Names.Add(Helper.ReadString(br));
+                        }
+                    }
                 }
             }
         }
