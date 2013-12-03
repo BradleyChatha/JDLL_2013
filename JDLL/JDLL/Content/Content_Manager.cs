@@ -23,6 +23,7 @@ namespace JDLL.Content
             this.FillNames();
 
             this.RegisterProcessor(new StringProcessor());
+            this.RegisterProcessor(new StringArrayProcessor());
         }
 
         public void RegisterProcessor(IContentProcessor processor)
@@ -92,9 +93,18 @@ namespace JDLL.Content
             {
                 using (BinaryReader br = new BinaryReader(fs))
                 {
+                    ushort Num = 0;
+
                     while (br.PeekChar() != -1)
                     {
-                        ushort Num = br.ReadUInt16();
+                        try
+                        {
+                            Num = br.ReadUInt16();
+                        }
+                        catch
+                        {
+                            return;
+                        }
 
                         if (Num == Content_Manager.op_Start)
                         {

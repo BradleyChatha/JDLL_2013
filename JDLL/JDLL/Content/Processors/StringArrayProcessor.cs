@@ -28,8 +28,9 @@ namespace JDLL.Content
         public override object Import(System.IO.BinaryReader br)
         {
             List<String> Data = new List<String>();
+            int Length = br.ReadInt32();
 
-            for (int i = 0; i < br.ReadInt32(); i++)
+            for (int i = 0; i < Length; i++)
             {
                 Data.Add(Helper.ReadString(br));
             }
