@@ -14,8 +14,8 @@ namespace JDLL.Content
 
         public String Filename { get; private set; }
 
-        public static ushort op_Start = 0x01;
-        public static ushort op_End = 0x02;
+        public static ushort op_Start = 20;
+        public static ushort op_End = 21;
 
         public Content_Manager(String filename)
         {
@@ -36,7 +36,7 @@ namespace JDLL.Content
             {
                 using (BinaryReader br = new BinaryReader(fs))
                 {
-                    while (br.PeekChar() != -1 && br.PeekChar() != 0)
+                    while (br.PeekChar() != -1)
                     {
                         if (br.ReadUInt16() == Content_Manager.op_Start)
                         {
@@ -92,7 +92,7 @@ namespace JDLL.Content
             {
                 using (BinaryReader br = new BinaryReader(fs))
                 {
-                    while (br.PeekChar() != -1 && br.PeekChar() != 0)
+                    while (br.PeekChar() != -1)
                     {
                         ushort Num = br.ReadUInt16();
 
