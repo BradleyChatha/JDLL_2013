@@ -56,6 +56,11 @@ namespace JDLL.Content
             throw new Exception("Entry '" + name + "' not found!");
         }
 
+        public T Read<T>(String name)
+        {
+            return (T)this.Read(name);
+        }
+
         public void Write(object data, String name, String processorTypeName)
         {
             if (this.Names.Contains(name))
