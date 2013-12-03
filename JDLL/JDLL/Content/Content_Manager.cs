@@ -25,6 +25,7 @@ namespace JDLL.Content
             this.RegisterProcessor(new StringProcessor());
             this.RegisterProcessor(new StringArrayProcessor());
             this.RegisterProcessor(new Int32Processor());
+            this.RegisterProcessor(new Int32ArrayProcessor());
         }
 
         public void RegisterProcessor(IContentProcessor processor)
@@ -101,21 +102,27 @@ namespace JDLL.Content
                 {
                     ushort Num = 0;
 
-                    while (br.PeekChar() != -1)
+                    try
                     {
-                        try
+                        while (br.PeekChar() != -1)
                         {
-                            Num = br.ReadUInt16();
-                        }
-                        catch
-                        {
-                            return;
-                        }
+                            try
+                            {
+                                Num = br.ReadUInt16();
+                            }
+                            catch
+                            {
+                                return;
+                            }
 
-                        if (Num == Content_Manager.op_Start)
-                        {
-                            this.Names.Add(Helper.ReadString(br));
+                            if (Num == Content_Manager.op_Start)
+                            {
+                                this.Names.Add(Helper.ReadString(br));
+                            }
                         }
+                    }
+                    catch
+                    {
                     }
                 }
             }
