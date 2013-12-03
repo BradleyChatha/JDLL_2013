@@ -14,8 +14,8 @@ namespace JDLL.Content
 
         public String Filename { get; private set; }
 
-        public static ushort op_Start = 0x00F2F1;
-        public static ushort op_End = 0x00F2F2;
+        public static ushort op_Start = 0x01;
+        public static ushort op_End = 0x02;
 
         public Content_Manager(String filename)
         {
@@ -23,15 +23,36 @@ namespace JDLL.Content
             this.FillNames();
 
             this.RegisterProcessor(new StringProcessor());
-
-            #region Debug
-            File.WriteAllLines("Debug.txt", Names.ToArray());
-            #endregion
         }
 
         public void RegisterProcessor(IContentProcessor processor)
         {
             this.Processors.Add(processor.TypeName(), processor);
+        }
+
+        public object Read(String name)
+        {
+            using (FileStream fs = new FileStream(this.Filename, FileMode.OpenOrCreate))
+            {
+                using (BinaryReader br = new BinaryReader(fs))
+                {
+                    while (br.PeekChar() != -1 && br.PeekChar() != 0)
+                    {
+                        if (br.ReadUInt16() == Content_Manager.op_Start)
+                        {
+                            if (Helper.ReadString(br).Equals(name))
+                            {
+                                String Process = Helper.ReadString(br);
+
+                                return this.Processors[Process].Import(br);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // TODO: Create a custom exception
+            throw new Exception("Entry '" + name + "' not found!");
         }
 
         public void Write(object data, String name, String processorTypeName)
@@ -47,6 +68,8 @@ namespace JDLL.Content
                 // TODO: Add exception to throw
                 return;
             }
+
+            this.Names.Add(name);
 
             using (FileStream fs = new FileStream(this.Filename, FileMode.Append))
             {
@@ -69,7 +92,7 @@ namespace JDLL.Content
             {
                 using (BinaryReader br = new BinaryReader(fs))
                 {
-                    while (br.PeekChar() != -1)
+                    while (br.PeekChar() != -1 && br.PeekChar() != 0)
                     {
                         ushort Num = br.ReadUInt16();
 
@@ -80,6 +103,15 @@ namespace JDLL.Content
                     }
                 }
             }
+        }
+
+        ~Content_Manager()
+        {
+            File.WriteAllLines("Debug.txt", Names.ToArray());
+
+            this.Filename = "";
+            this.Names = null;
+            this.Processors = null;
         }
     }
 }
