@@ -20,7 +20,7 @@ namespace JDLL.Content
 
         public override void Export(System.IO.BinaryWriter bw, object data)
         {
-            bw.Write((string)data);
+            bw.Write(Convert.ToString(data)); 
         }
     }
 }
