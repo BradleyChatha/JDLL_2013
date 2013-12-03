@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JDLL.Content
 {
-    class Content_Manager
+    public class Content_Manager
     {
     }
 }

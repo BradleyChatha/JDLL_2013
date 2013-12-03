@@ -9,6 +9,8 @@ namespace JDLL.Content
 {
     public abstract class IContentProcessor
     {
+        public abstract String TypeName();
+
         public abstract object Import(BinaryReader br);
         public abstract void Export(BinaryWriter bw, object data);
     }

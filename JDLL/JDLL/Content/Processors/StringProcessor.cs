@@ -4,9 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JDLL.Content.Processors
+namespace JDLL.Content
 {
-    class StringProcessor
+    public class StringProcessor : IContentProcessor
     {
+        public override string TypeName()
+        {
+            return "string";
+        }
+
+        public override object Import(System.IO.BinaryReader br)
+        {
+            return br.ReadString();
+        }
+
+        public override void Export(System.IO.BinaryWriter bw, object data)
+        {
+            bw.Write((string)data);
+        }
     }
 }
