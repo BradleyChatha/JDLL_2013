@@ -65,8 +65,7 @@ namespace JDLL.Content
 
             if (!this.Processors.ContainsKey(processorTypeName))
             {
-                // TODO: Add exception to throw
-                return;
+                throw new ProcessorNotRegisteredException("Processor '" + processorTypeName + "' hasn't been registered!");
             }
 
             this.Names.Add(name);
@@ -81,7 +80,8 @@ namespace JDLL.Content
 
                     this.Processors[processorTypeName].Export(bw, data);
 
-                    bw.Write(Content_Manager.op_End);
+                    // TODO: Fix Char Buffer error related to this opcode writing out null values
+                    // bw.Write(Content_Manager.op_End);
                 }
             }
         }
