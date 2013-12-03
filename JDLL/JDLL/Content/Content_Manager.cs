@@ -24,6 +24,7 @@ namespace JDLL.Content
 
             this.RegisterProcessor(new StringProcessor());
             this.RegisterProcessor(new StringArrayProcessor());
+            this.RegisterProcessor(new Int32Processor());
         }
 
         public void RegisterProcessor(IContentProcessor processor)
