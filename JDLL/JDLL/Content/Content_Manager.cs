@@ -33,6 +33,11 @@ namespace JDLL.Content
             this.Processors.Add(processor.TypeName(), processor);
         }
 
+        public void DeleteFile()
+        {
+            File.Delete(this.Filename);
+        }
+
         public object Read(String name)
         {
             using (FileStream fs = new FileStream(this.Filename, FileMode.OpenOrCreate))
