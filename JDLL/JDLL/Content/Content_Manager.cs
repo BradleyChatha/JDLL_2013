@@ -26,6 +26,8 @@ namespace JDLL.Content
             this.RegisterProcessor(new StringArrayProcessor());
             this.RegisterProcessor(new Int32Processor());
             this.RegisterProcessor(new Int32ArrayProcessor());
+            this.RegisterProcessor(new BoolProcessor());
+            this.RegisterProcessor(new FileProcessor());
         }
 
         public void RegisterProcessor(IContentProcessor processor)
@@ -42,19 +44,27 @@ namespace JDLL.Content
         {
             using (FileStream fs = new FileStream(this.Filename, FileMode.OpenOrCreate))
             {
-                using (BinaryReader br = new BinaryReader(fs))
+                using (BinaryReader br = new BinaryReader(fs, Encoding.UTF8))
                 {
-                    while (br.PeekChar() != -1)
+                    try
                     {
-                        if (br.ReadUInt16() == Content_Manager.op_Start)
+                        while (br.ReadByte() != -20)
                         {
-                            if (Helper.ReadString(br).Equals(name))
-                            {
-                                String Process = Helper.ReadString(br);
+                            br.BaseStream.Position -= 1;
 
-                                return this.Processors[Process].Import(br);
+                            if (br.ReadUInt16() == Content_Manager.op_Start)
+                            {
+                                if (Helper.ReadString(br).Equals(name))
+                                {
+                                    String Process = Helper.ReadString(br);
+
+                                    return this.Processors[Process].Import(br);
+                                }
                             }
                         }
+                    }
+                    catch
+                    {
                     }
                 }
             }
@@ -85,7 +95,7 @@ namespace JDLL.Content
 
             using (FileStream fs = new FileStream(this.Filename, FileMode.Append))
             {
-                using (BinaryWriter bw = new BinaryWriter(fs))
+                using (BinaryWriter bw = new BinaryWriter(fs, Encoding.UTF8))
                 {
                     bw.Write(Content_Manager.op_Start);
                     Helper.WriteString(name, bw);
@@ -103,14 +113,16 @@ namespace JDLL.Content
         {
             using (FileStream fs = new FileStream(this.Filename, FileMode.OpenOrCreate))
             {
-                using (BinaryReader br = new BinaryReader(fs))
+                using (BinaryReader br = new BinaryReader(fs, Encoding.UTF8))
                 {
                     ushort Num = 0;
 
                     try
                     {
-                        while (br.PeekChar() != -1)
+                        while (br.ReadByte() != -20)
                         {
+                            br.BaseStream.Position -= 1;
+
                             try
                             {
                                 Num = br.ReadUInt16();
@@ -135,7 +147,7 @@ namespace JDLL.Content
 
         ~Content_Manager()
         {
-            File.WriteAllLines("Debug.txt", Names.ToArray());
+            //File.WriteAllLines("Debug.txt", Names.ToArray());
 
             this.Filename = "";
             this.Names = null;
