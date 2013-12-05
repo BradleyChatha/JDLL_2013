@@ -7,7 +7,7 @@ using System.IO;
 
 namespace JDLL.Content
 {
-    class Helper
+    public class Helper
     {
         internal static void WriteString(String input, BinaryWriter bw)
         {
@@ -32,6 +32,16 @@ namespace JDLL.Content
 
             Data.Trim('\0');
             return Data;
+        }
+
+        public static String Base64Encode(String toEncode)
+        {
+            return Convert.ToBase64String(Encoding.Unicode.GetBytes(toEncode));
+        }
+
+        public static String Base64Decode(String toDecode)
+        {
+            return Encoding.Unicode.GetString(Convert.FromBase64String(toDecode));
         }
     }
 }
