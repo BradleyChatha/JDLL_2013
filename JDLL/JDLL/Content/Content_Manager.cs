@@ -69,6 +69,34 @@ namespace JDLL.Content
         }
 
         /// <summary>
+        /// Get's all of the TypeNames of the registered processors
+        /// </summary>
+        /// <returns>All of the TypeNames of the registered processors</returns>
+        public String[] GetProcessorTypeNames()
+        {
+            return this.Processors.Keys.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all of the Processors currently registered
+        /// </summary>
+        /// <returns>An array of all the registered processors</returns>
+        public IContentProcessor[] GetAllProcessors()
+        {
+            return this.Processors.Values.ToArray();
+        }
+
+        /// <summary>
+        /// Gets the processor with the TypeName of "typeName"
+        /// </summary>
+        /// <param name="typeName">The processor with the TypeName of "typeName"</param>
+        /// <returns></returns>
+        public IContentProcessor GetProcessorByTypeName(String typeName)
+        {
+            return this.Processors[typeName];
+        }
+
+        /// <summary>
         /// Checks to see if the processor with the TypeName "processorTypeName" exists. True if it does. False if it doesn't
         /// </summary>
         /// <param name="processorTypeName">TypeName of the processor</param>
