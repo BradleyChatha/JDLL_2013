@@ -58,6 +58,17 @@
     </Compile>
     <Compile Include="Components\ComponentHolder.cs" />
     <Compile Include="Components\IComponent.cs" />
+    <Compile Include="Content\Content_Manager.cs" />
+    <Compile Include="Content\Exceptions\ProcessorNotRegisteredException.cs" />
+    <Compile Include="Content\Helper.cs" />
+    <Compile Include="Content\Processors\BoolProcessor.cs" />
+    <Compile Include="Content\Processors\ByteArrayProcessor.cs" />
+    <Compile Include="Content\Processors\FileProcessor.cs" />
+    <Compile Include="Content\Processors\IContentProcessor.cs" />
+    <Compile Include="Content\Processors\Int32ArrayProcessor.cs" />
+    <Compile Include="Content\Processors\Int32Processor.cs" />
+    <Compile Include="Content\Processors\StringArrayProcessor.cs" />
+    <Compile Include="Content\Processors\StringProcessor.cs" />
     <Compile Include="Data\Config.cs" />
     <Compile Include="Data\Logging\ISeverety.cs" />
     <Compile Include="Data\Logging\Log.cs" />

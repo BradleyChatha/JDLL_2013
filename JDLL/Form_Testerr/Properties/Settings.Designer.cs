@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WPF_Tester.Properties
+namespace Form_Testerr.Properties
 {
 
 

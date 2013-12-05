@@ -1,9 +1,0 @@
-﻿<Window
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:Controls="clr-namespace:JDLL.Controls;assembly=JDLL" x:Class="WPF_Tester.MainWindow"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <Controls:PasswordField x:Name="Pass" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="109,92,0,0" HideAfterSubmit="True"/>
-    </Grid>
-</Window>
