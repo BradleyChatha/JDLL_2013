@@ -7,16 +7,36 @@ using System.Threading.Tasks;
 
 namespace JDLL.Content
 {
+
+    /// <summary>
+    /// Class for handling binary files that contain multitudes of customly processed data
+    /// </summary>
     public class Content_Manager
     {
         Dictionary<String, IContentProcessor> Processors = new Dictionary<String, IContentProcessor>();
         List<String> Names = new List<String>();
 
+        /// <summary>
+        /// Path to the file used
+        /// </summary>
         public String Filename { get; private set; }
 
+
+        /// <summary>
+        /// Opcode written at the start of an entry
+        /// </summary>
         public static ushort op_Start = 20;
+
+        /// <summary>
+        /// Opcode written ad the end of an entry
+        /// </summary>
+        [Obsolete("Causes CharBuffer crashes and is currently not used, pointless right now")]
         public static ushort op_End = 21;
 
+        /// <summary>
+        /// Class for handling binary files that contain multitudes of customly processed data
+        /// </summary>
+        /// <param name="filename">Path to the file to use</param>
         public Content_Manager(String filename)
         {
             this.Filename = filename;
@@ -31,26 +51,47 @@ namespace JDLL.Content
             this.RegisterProcessor(new ByteArrayProcessor());       // byteArray
         }
 
+        /// <summary>
+        /// Registers an IContentProcessor to use, is accessed in the "Write" class by it's "TypeName"
+        /// </summary>
+        /// <param name="processor">Processor to register</param>
         public void RegisterProcessor(IContentProcessor processor)
         {
             this.Processors.Add(processor.TypeName(), processor);
         }
 
+        /// <summary>
+        /// Deletes the file
+        /// </summary>
         public void DeleteFile()
         {
             File.Delete(this.Filename);
         }
 
+        /// <summary>
+        /// Checks to see if the processor with the TypeName "processorTypeName" exists. True if it does. False if it doesn't
+        /// </summary>
+        /// <param name="processorTypeName">TypeName of the processor</param>
+        /// <returns>True if it does exist. False if it doesn't</returns>
         public bool DoesProcessorExist(String processorTypeName)
         {
             return this.Processors.ContainsKey(processorTypeName);
         }
 
+        /// <summary>
+        /// Unregisters the processor with the TypeName "processorTypeName"
+        /// </summary>
+        /// <param name="processorTypeName">TypeName of the processor to remove</param>
         public void UnregisterProcessor(String processorTypeName)
         {
             this.Processors.Remove(processorTypeName);
         }
 
+        /// <summary>
+        /// Reads the file for the entry with the name "name", calls the processor it was processed with to parse the data and then returns that data. Throws EntryNotFoundException if an entry with "name" doesn't exist
+        /// </summary>
+        /// <param name="name">Name of the entry to read</param>
+        /// <returns>Parsed data from the processor the entry is associated to</returns>
         public object Read(String name)
         {
             using (FileStream fs = new FileStream(this.Filename, FileMode.OpenOrCreate))
@@ -84,11 +125,24 @@ namespace JDLL.Content
             throw new Exception("Entry '" + name + "' not found!");
         }
 
+        /// <summary>
+        /// Calls the Read method but casts it to T
+        /// </summary>
+        /// <typeparam name="T">Type to cast it to</typeparam>
+        /// <param name="name">Name of the entry to read</param>
+        /// <returns>Casted data from Read()</returns>
+        /// <seealso cref="Read(String name)"/>
         public T Read<T>(String name)
         {
             return (T)this.Read(name);
         }
 
+        /// <summary>
+        /// Writes an entry into the file, "data" get's passed into the processor of "processorTypeName" to be written. Throws ProcessorNotRegisteredException if a processor that's TypeName is "processorTypeName" hasn't been registered. Will return prematurly if the entry with "name" already exists
+        /// </summary>
+        /// <param name="data">Data to pass into the processor</param>
+        /// <param name="name">Name of the entry</param>
+        /// <param name="processorTypeName">TypeName of the processor to use</param>
         public void Write(object data, String name, String processorTypeName)
         {
             if (this.Names.Contains(name))
