@@ -41,6 +41,16 @@ namespace JDLL.Content
             File.Delete(this.Filename);
         }
 
+        public bool DoesProcessorExist(String processorTypeName)
+        {
+            return this.Processors.ContainsKey(processorTypeName);
+        }
+
+        public void UnregisterProcessor(String processorTypeName)
+        {
+            this.Processors.Remove(processorTypeName);
+        }
+
         public object Read(String name)
         {
             using (FileStream fs = new FileStream(this.Filename, FileMode.OpenOrCreate))
