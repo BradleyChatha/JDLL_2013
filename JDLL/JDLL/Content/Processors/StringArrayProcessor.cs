@@ -10,7 +10,7 @@ namespace JDLL.Content
     {
         public override string TypeName()
         {
-            return "arrString";
+            return "stringArray";
         }
 
         public override void Export(System.IO.BinaryWriter bw, object data)
