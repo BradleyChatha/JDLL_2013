@@ -17,5 +17,10 @@ namespace JDLL.Content
         {
             bw.Write((bool)data);
         }
+
+        public override object Import(System.IO.BinaryReader br)
+        {
+            return br.ReadBoolean();
+        }
     }
 }
