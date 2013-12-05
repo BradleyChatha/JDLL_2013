@@ -22,12 +22,13 @@ namespace JDLL.Content
             this.Filename = filename;
             this.FillNames();
 
-            this.RegisterProcessor(new StringProcessor());
-            this.RegisterProcessor(new StringArrayProcessor());
-            this.RegisterProcessor(new Int32Processor());
-            this.RegisterProcessor(new Int32ArrayProcessor());
-            this.RegisterProcessor(new BoolProcessor());
-            this.RegisterProcessor(new FileProcessor());
+            this.RegisterProcessor(new StringProcessor());          // string
+            this.RegisterProcessor(new StringArrayProcessor());     // stringArray
+            this.RegisterProcessor(new Int32Processor());           // int32
+            this.RegisterProcessor(new Int32ArrayProcessor());      // int32Array
+            this.RegisterProcessor(new BoolProcessor());            // bool
+            this.RegisterProcessor(new FileProcessor());            // file
+            this.RegisterProcessor(new ByteArrayProcessor());       // byteArray
         }
 
         public void RegisterProcessor(IContentProcessor processor)
