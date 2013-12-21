@@ -59,6 +59,7 @@
     <Compile Include="Components\ComponentHolder.cs" />
     <Compile Include="Components\IComponent.cs" />
     <Compile Include="Content\Content_Manager.cs" />
+    <Compile Include="Content\Exceptions\EntryNotFoundException.cs" />
     <Compile Include="Content\Exceptions\ProcessorNotRegisteredException.cs" />
     <Compile Include="Content\Helper.cs" />
     <Compile Include="Content\Processors\BoolProcessor.cs" />
@@ -82,10 +83,6 @@
     <Compile Include="Exceptions\ValueAlreadyExistsException.cs" />
     <Compile Include="Exceptions\ValueDoesntExistException.cs" />
     <Compile Include="JDLLHelper.cs" />
-    <Compile Include="JMaths\JMaths.cs" />
-    <Compile Include="JMaths\JMathsCompiler.cs" />
-    <Compile Include="JMaths\JMathsRunner.cs" />
-    <Compile Include="JMaths\Opcodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\FileIO.cs" />
     <Compile Include="Data\Variables.cs" />

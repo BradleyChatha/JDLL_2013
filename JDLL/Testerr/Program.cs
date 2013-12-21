@@ -20,7 +20,6 @@ using JDLL.Exceptions;
 using JDLL.SealScript;
 using JDLL.Experiments;
 using JDLL.Windows;
-using JDLL.JMaths;
 
 // ^ The Namespaces of the DLL
 

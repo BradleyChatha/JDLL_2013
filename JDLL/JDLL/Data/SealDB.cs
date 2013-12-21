@@ -424,15 +424,12 @@ namespace JDLL.Data
 
             String Name = "";
             Member Memb = new Member();
-            Value Val;
 
             bool Found = false;
             bool Found2 = false;
-            bool Close1 = false;
 
             bool Found3 = false;
             bool Found4 = false;
-            bool Close2 = false;
 
             foreach (String s in this._Contents)
             {
