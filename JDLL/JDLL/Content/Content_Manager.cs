@@ -30,17 +30,21 @@ namespace JDLL.Content
         /// <summary>
         /// Opcode written ad the end of an entry
         /// </summary>
-        [Obsolete("Causes CharBuffer crashes and is currently not used, pointless right now")]
+        [Obsolete("Causes CharBuffer crashes and is currently not used, pointless right now", true)]
         public static ushort op_End = 21;
 
         /// <summary>
         /// Class for handling binary files that contain multitudes of customly processed data
         /// </summary>
         /// <param name="filename">Path to the file to use</param>
-        public Content_Manager(String filename)
+        public Content_Manager(String filename, bool nonContentFile = false)
         {
             this.Filename = filename;
-            this.FillNames();
+
+            if (!nonContentFile)
+            {
+                this.FillNames();
+            }
 
             this.RegisterProcessor(new StringProcessor());          // string
             this.RegisterProcessor(new StringArrayProcessor());     // stringArray
@@ -58,6 +62,16 @@ namespace JDLL.Content
         public void RegisterProcessor(IContentProcessor processor)
         {
             this.Processors.Add(processor.TypeName(), processor);
+        }
+
+        /// <summary>
+        /// Checks for "entryName" and returns whether it exists or not
+        /// </summary>
+        /// <param name="entryName">The entry to check</param>
+        /// <returns>Whether entryName exists or not</returns>
+        public bool DoesEntryExist(String entryName)
+        {
+            return this.Names.Contains(entryName);
         }
 
         /// <summary>
@@ -149,8 +163,7 @@ namespace JDLL.Content
                 }
             }
 
-            // TODO: Create a custom exception
-            throw new Exception("Entry '" + name + "' not found!");
+            throw new EntryNotFoundException(name);
         }
 
         /// <summary>
@@ -237,6 +250,43 @@ namespace JDLL.Content
                 }
             }
         }
+
+        #region Jaster Program Customs
+
+        #region JIAsm
+
+        public void JIAsmWrite(object data, String name, String processorTypeName, BinaryWriter bw)
+        {
+            if (!this.Processors.ContainsKey(processorTypeName))
+            {
+                throw new ProcessorNotRegisteredException("Processor '" + processorTypeName + "' hasn't been registered!");
+            }
+
+            bw.Write(Content_Manager.op_Start);
+            Helper.WriteString(name, bw);
+            Helper.WriteString((this.Processors[processorTypeName].TypeName()), bw);
+
+            this.Processors[processorTypeName].Export(bw, data);
+        }
+
+        public T JIAsmRead<T>(String name, BinaryReader br)
+        {
+            if (br.ReadUInt16() == Content_Manager.op_Start)
+            {
+                if (Helper.ReadString(br).Equals(name))
+                {
+                    String Process = Helper.ReadString(br);
+
+                    return (T)this.Processors[Process].Import(br);
+                }
+            }
+
+            throw new EntryNotFoundException(name);
+        }
+
+        #endregion
+
+        #endregion
 
         ~Content_Manager()
         {
